@@ -1,6 +1,11 @@
 // workers/workflow-worker.ts
+// Load environment variables from .env as early as possible so other modules
+// that read process.env (like lib/gemini/client.ts) have the values available.
+import 'dotenv/config'
+
 import { workflowWorker, indexingWorker } from '@/lib/queue/workers'
 import { logger } from '@/lib/utils/logger'
+
 
 logger.info('Starting workflow workers...')
 

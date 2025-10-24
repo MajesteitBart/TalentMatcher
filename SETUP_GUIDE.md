@@ -14,9 +14,9 @@ Make sure you have:
 
 ### 1️⃣ Install Dependencies
 
-\`\`\`bash
+```bash
 npm install
-\`\`\`
+```
 
 This will install all required packages including:
 - Next.js 14
@@ -57,12 +57,12 @@ This will install all required packages including:
 ### 4️⃣ Configure Environment Variables
 
 1. Copy the example file:
-\`\`\`bash
+```bash
 cp .env.example .env.local
-\`\`\`
+```
 
 2. Edit `.env.local` with your credentials:
-\`\`\`env
+```env
 # Supabase (from step 2)
 NEXT_PUBLIC_SUPABASE_URL=https://xxxxx.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
@@ -78,20 +78,20 @@ REDIS_PORT=6379
 # App
 NEXT_PUBLIC_APP_URL=http://localhost:3000
 NODE_ENV=development
-\`\`\`
+```
 
 ### 5️⃣ Start Redis
 
 Redis is required for the job queue:
 
-\`\`\`bash
+```bash
 docker-compose up -d
-\`\`\`
+```
 
 Verify it's running:
-\`\`\`bash
+```bash
 docker ps
-\`\`\`
+```
 
 You should see a redis container running.
 
@@ -99,23 +99,23 @@ You should see a redis container running.
 
 Open a **new terminal window** and run:
 
-\`\`\`bash
+```bash
 npm run worker:workflow
-\`\`\`
+```
 
 Keep this terminal open. You should see:
-\`\`\`
+```
 [INFO] Starting workflow workers...
 [INFO] Workers are running and waiting for jobs
-\`\`\`
+```
 
 ### 7️⃣ Start the Next.js Development Server
 
 In your **original terminal**, run:
 
-\`\`\`bash
+```bash
 npm run dev
-\`\`\`
+```
 
 The app will start on [http://localhost:3000](http://localhost:3000)
 
@@ -148,11 +148,11 @@ The app will start on [http://localhost:3000](http://localhost:3000)
      - status: "active"
 
 2. **Index the job**:
-\`\`\`bash
-curl -X POST http://localhost:3000/api/jobs/index \\
-  -H "Content-Type: application/json" \\
+```bash
+curl -X POST http://localhost:3000/api/jobs/index 
+  -H "Content-Type: application/json" 
   -d '{"company_id": "00000000-0000-0000-0000-000000000001"}'
-\`\`\`
+```
 
 3. **Add a test candidate** in Supabase:
    - Go to Table Editor > candidates

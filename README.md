@@ -31,9 +31,9 @@ When a candidate is rejected for a position, this system automatically:
 
 ### 1. Install Dependencies
 
-\`\`\`bash
+```bash
 npm install
-\`\`\`
+```
 
 ### 2. Setup Supabase
 
@@ -45,13 +45,13 @@ npm install
 
 Copy `.env.example` to `.env.local`:
 
-\`\`\`bash
+```bash
 cp .env.example .env.local
-\`\`\`
+```
 
 Fill in your credentials:
 
-\`\`\`env
+```env
 # Supabase
 NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
@@ -67,27 +67,27 @@ REDIS_PORT=6379
 # App
 NEXT_PUBLIC_APP_URL=http://localhost:3000
 NODE_ENV=development
-\`\`\`
+```
 
 ### 4. Start Redis
 
-\`\`\`bash
+```bash
 docker-compose up -d
-\`\`\`
+```
 
 ### 5. Start the Workers
 
 In a separate terminal:
 
-\`\`\`bash
+```bash
 npm run worker:workflow
-\`\`\`
+```
 
 ### 6. Start the Development Server
 
-\`\`\`bash
+```bash
 npm run dev
-\`\`\`
+```
 
 Visit [http://localhost:3000](http://localhost:3000)
 
@@ -95,7 +95,7 @@ Visit [http://localhost:3000](http://localhost:3000)
 
 ### Reject Candidate & Trigger Matching
 
-\`\`\`bash
+```bash
 POST /api/candidates/reject
 Content-Type: application/json
 
@@ -104,17 +104,17 @@ Content-Type: application/json
   "application_id": "uuid",
   "rejection_reason": "Not enough experience" 
 }
-\`\`\`
+```
 
 ### Check Workflow Status
 
-\`\`\`bash
+```bash
 GET /api/workflow/status/[workflow_execution_id]
-\`\`\`
+```
 
 ### Index Jobs for Vector Search
 
-\`\`\`bash
+```bash
 POST /api/jobs/index
 Content-Type: application/json
 
@@ -122,13 +122,13 @@ Content-Type: application/json
   "company_id": "uuid",
   "job_ids": ["uuid1", "uuid2"] // optional, indexes all active jobs if omitted
 }
-\`\`\`
+```
 
 ## 🔄 Workflow Architecture
 
 The matching workflow uses LangGraph for orchestration:
 
-\`\`\`
+```
 START
   ↓
 Parse CV (Gemini)
@@ -142,7 +142,7 @@ Consolidate Matches (weighted scoring)
 Generate Analysis (Gemini)
   ↓
 END
-\`\`\`
+```
 
 ### Key Features:
 
@@ -168,29 +168,29 @@ Key tables:
 To test the workflow:
 
 1. First, index some jobs:
-\`\`\`bash
-curl -X POST http://localhost:3000/api/jobs/index \\
-  -H "Content-Type: application/json" \\
+```bash
+curl -X POST http://localhost:3000/api/jobs/index 
+  -H "Content-Type: application/json" 
   -d '{"company_id": "00000000-0000-0000-0000-000000000001"}'
-\`\`\`
+```
 
 2. Create a candidate and application (via Supabase dashboard or API)
 
 3. Reject the candidate to trigger matching:
-\`\`\`bash
-curl -X POST http://localhost:3000/api/candidates/reject \\
-  -H "Content-Type: application/json" \\
+```bash
+curl -X POST http://localhost:3000/api/candidates/reject 
+  -H "Content-Type: application/json" 
   -d '{
     "candidate_id": "your-candidate-uuid",
     "application_id": "your-application-uuid",
     "rejection_reason": "Overqualified"
   }'
-\`\`\`
+```
 
 4. Check the workflow status:
-\`\`\`bash
+```bash
 curl http://localhost:3000/api/workflow/status/[workflow_id]
-\`\`\`
+```
 
 ## 📈 Performance
 
