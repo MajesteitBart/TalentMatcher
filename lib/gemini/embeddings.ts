@@ -31,7 +31,10 @@ export async function generateEmbeddings(texts: string[]): Promise<number[][]> {
       const batch = texts.slice(i, i + batchSize)
       
       const requests = batch.map(text => ({
-        content: { parts: [{ text }] }
+        content: {
+          role: "user",
+          parts: [{ text }]
+        }
       }))
       
       const result = await embeddingModel.batchEmbedContents({ requests })

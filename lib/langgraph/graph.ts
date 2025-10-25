@@ -30,11 +30,11 @@ export function createWorkflowGraph() {
   
   // Define edges
   // START -> parse_cv
-  workflow.addEdge(START, 'parse_cv')
+  workflow.addEdge(START, 'parse_cv' as any)
   
   // parse_cv -> parallel retrieval nodes (CORRECT WAY TO DO PARALLEL EXECUTION)
   workflow.addConditionalEdges(
-    'parse_cv',
+    'parse_cv' as any,
     async (state: WorkflowState) => {
       // Check if parsing was successful
       if (state.error || !state.parsed_cv) {
@@ -54,15 +54,15 @@ export function createWorkflowGraph() {
   )
   
   // All retrieval nodes converge to consolidate
-  workflow.addEdge('retrieve_skills', 'consolidate')
-  workflow.addEdge('retrieve_experience', 'consolidate')
-  workflow.addEdge('retrieve_profile', 'consolidate')
-  
+  workflow.addEdge('retrieve_skills' as any, 'consolidate' as any)
+  workflow.addEdge('retrieve_experience' as any, 'consolidate' as any)
+  workflow.addEdge('retrieve_profile' as any, 'consolidate' as any)
+
   // consolidate -> analyze
-  workflow.addEdge('consolidate', 'analyze')
-  
+  workflow.addEdge('consolidate' as any, 'analyze' as any)
+
   // analyze -> END
-  workflow.addEdge('analyze', END)
+  workflow.addEdge('analyze' as any, END)
   
   // Compile the graph
   const compiledGraph = workflow.compile()

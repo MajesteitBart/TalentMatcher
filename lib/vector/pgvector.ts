@@ -37,12 +37,12 @@ export async function storeJobEmbeddings(
     }
   ]
   
-  const { data, error } = await supabase
+  const { data, error } = await (supabase
     .from('job_embeddings')
-    .upsert(embeddingRecords, {
+    .upsert(embeddingRecords as any, {
       onConflict: 'job_id,embedding_type'
     })
-    .select()
+    .select() as any)
   
   if (error) {
     logger.error('Failed to store job embeddings', { error, jobId })
@@ -75,24 +75,23 @@ export async function searchSimilarJobs(
   
   try {
     // Use the RPC function we created in the schema
-    const { data, error } = await supabase
-      .rpc('match_jobs', {
-        query_embedding: queryEmbedding as any, // pgvector type
+    const { data, error } = await ((supabase as any).rpc('match_jobs', {
+        query_embedding: queryEmbedding, // pgvector type
         match_threshold: matchThreshold,
         match_count: matchCount,
         filter_type: embeddingType
-      })
+      }))
     
     if (error) throw error
     
     // Filter out excluded jobs
     let results = data || []
     if (excludeJobIds.length > 0) {
-      results = results.filter(r => !excludeJobIds.includes(r.job_id))
+      results = results.filter((r: any) => !excludeJobIds.includes(r.job_id))
     }
     
     // Map to MatchResult type
-    const matches: MatchResult[] = results.map(row => ({
+    const matches: MatchResult[] = results.map((row: any) => ({
       job_id: row.job_id,
       job_title: row.job_title,
       job_description: row.job_description,

@@ -4,7 +4,7 @@ import type { WorkflowExecutionWithDetails } from '@/lib/types/database'
 export async function getWorkflowExecutions(): Promise<WorkflowExecutionWithDetails[]> {
   const supabase = createAdminClient()
 
-  const { data, error } = await supabase
+  const { data, error } = await (supabase
     .from('workflow_executions')
     .select(`
       id,
@@ -46,7 +46,7 @@ export async function getWorkflowExecutions(): Promise<WorkflowExecutionWithDeta
           )
         )
       )
-    `)
+    `) as any)
     .order('created_at', { ascending: false })
 
   if (error) {
@@ -60,7 +60,7 @@ export async function getWorkflowExecutions(): Promise<WorkflowExecutionWithDeta
 export async function getWorkflowExecution(id: string): Promise<WorkflowExecutionWithDetails | null> {
   const supabase = createAdminClient()
 
-  const { data, error } = await supabase
+  const { data, error } = await (supabase
     .from('workflow_executions')
     .select(`
       id,
@@ -108,7 +108,7 @@ export async function getWorkflowExecution(id: string): Promise<WorkflowExecutio
           )
         )
       )
-    `)
+    `) as any)
     .eq('id', id)
     .single()
 

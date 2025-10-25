@@ -253,8 +253,8 @@ export type JobWithCompany = Database['public']['Tables']['jobs']['Row'] & {
 
 export type WorkflowExecutionWithDetails = Database['public']['Tables']['workflow_executions']['Row'] & {
   candidate: Database['public']['Tables']['candidates']['Row'];
-  rejected_job: Database['public']['Tables']['jobs']['Row'];
+  rejected_job: JobWithCompany;
   match_results?: (Database['public']['Tables']['match_results']['Row'] & {
-    job: Database['public']['Tables']['jobs']['Row'];
+    job: JobWithCompany;
   })[];
 };

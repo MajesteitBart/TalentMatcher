@@ -7,6 +7,7 @@ import { createInitialState } from '@/lib/langgraph/state'
 import { logger } from '@/lib/utils/logger'
 import { z } from 'zod'
 import type { APIResponse } from '@/lib/types'
+import type { Database } from '@/lib/types/database'
 
 const RejectCandidateSchema = z.object({
   candidate_id: z.string().uuid(),
@@ -22,9 +23,9 @@ export async function POST(request: NextRequest): Promise<NextResponse<APIRespon
     const supabase = createAdminClient()
     
     // Get application details
-    const { data: application, error: appError } = await supabase
+    const { data: application, error: appError } = await (supabase
       .from('applications')
-      .select('*, candidate:candidates(*), job:jobs(*)')
+      .select('*, candidate:candidates(*), job:jobs(*)') as any)
       .eq('id', application_id)
       .single()
     
@@ -39,13 +40,13 @@ export async function POST(request: NextRequest): Promise<NextResponse<APIRespon
     }
     
     // Update application status to rejected
-    const { error: updateError } = await supabase
-      .from('applications')
+    const { error: updateError } = await (supabase
+      .from('applications') as any)
       .update({
         status: 'rejected',
         rejected_at: new Date().toISOString(),
         rejection_reason: rejection_reason || null
-      } as any)
+      })
       .eq('id', application_id)
     
     if (updateError) {

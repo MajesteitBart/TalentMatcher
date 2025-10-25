@@ -4,6 +4,9 @@ import { logger } from '@/lib/utils/logger'
 import { z } from 'zod'
 import type { CVParseSchema } from '@/lib/types'
 
+// Import the proper SchemaType from Google AI SDK
+import { SchemaType } from '@google/generative-ai'
+
 // Zod schema for validation
 const CVSchema = z.object({
   summary: z.string().min(10, 'Summary must be at least 10 characters'),
@@ -26,32 +29,32 @@ export async function parseCV(
     generationConfig: {
       responseMimeType: "application/json",
       responseSchema: {
-        type: "object",
+        type: SchemaType.OBJECT,
         properties: {
-          summary: { 
-            type: "string",
+          summary: {
+            type: SchemaType.STRING,
             description: "A 2-3 sentence professional summary of the candidate"
           },
-          skills: { 
-            type: "string",
+          skills: {
+            type: SchemaType.STRING,
             description: "Comma-separated list of technical and soft skills"
           },
-          work_experience: { 
-            type: "string",
+          work_experience: {
+            type: SchemaType.STRING,
             description: "Detailed work history with companies, roles, and durations"
           },
-          education: { 
-            type: "string",
+          education: {
+            type: SchemaType.STRING,
             description: "Educational background including degrees and institutions"
           },
           languages: {
-            type: "array",
-            items: { type: "string" },
+            type: SchemaType.ARRAY,
+            items: { type: SchemaType.STRING },
             description: "Languages spoken"
           },
           certifications: {
-            type: "array",
-            items: { type: "string" },
+            type: SchemaType.ARRAY,
+            items: { type: SchemaType.STRING },
             description: "Professional certifications"
           }
         },

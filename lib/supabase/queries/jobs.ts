@@ -5,9 +5,9 @@ import type { Job, JobEmbedding } from '@/lib/types'
 export async function getActiveJobs(companyId: string) {
   const supabase = createAdminClient()
   
-  const { data, error } = await supabase
+  const { data, error } = await (supabase
     .from('jobs')
-    .select('*')
+    .select('*') as any)
     .eq('company_id', companyId)
     .eq('status', 'active')
     .order('created_at', { ascending: false })
@@ -19,9 +19,9 @@ export async function getActiveJobs(companyId: string) {
 export async function getJobById(jobId: string) {
   const supabase = createAdminClient()
   
-  const { data, error } = await supabase
+  const { data, error } = await (supabase
     .from('jobs')
-    .select('*')
+    .select('*') as any)
     .eq('id', jobId)
     .single()
   
@@ -32,12 +32,12 @@ export async function getJobById(jobId: string) {
 export async function getJobsWithEmbeddings(jobIds: string[]) {
   const supabase = createAdminClient()
   
-  const { data, error } = await supabase
+  const { data, error } = await (supabase
     .from('jobs')
     .select(`
       *,
       embeddings:job_embeddings(*)
-    `)
+    `) as any)
     .in('id', jobIds)
   
   if (error) throw error
@@ -47,11 +47,11 @@ export async function getJobsWithEmbeddings(jobIds: string[]) {
 export async function createJob(job: Omit<Job, 'id' | 'created_at' | 'updated_at'>) {
   const supabase = createAdminClient()
   
-  const { data, error } = await supabase
+  const { data, error } = await (supabase
     .from('jobs')
-    .insert([job])
+    .insert([job] as any)
     .select()
-    .single()
+    .single())
   
   if (error) throw error
   return data as Job

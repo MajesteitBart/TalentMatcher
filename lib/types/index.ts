@@ -12,8 +12,8 @@ export type Database = {
           created_at: string
           updated_at: string
         }
-        Insert: Omit<Row, 'id' | 'created_at' | 'updated_at'>
-        Update: Partial<Insert>
+        Insert: Omit<Company, 'id' | 'created_at' | 'updated_at'>
+        Update: Partial<Company>
       }
       // ... other tables
     }

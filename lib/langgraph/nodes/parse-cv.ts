@@ -21,6 +21,8 @@ export async function parseCVNode(state: WorkflowState): Promise<Partial<Workflo
     const savedParsedCV = await saveParsedCV({
       candidate_id: state.candidate_id,
       ...parsed,
+      languages: parsed.languages || [],
+      certifications: parsed.certifications || [],
       parser_version: 'gemini-2.0-flash',
       validation_status: validation.status
     })

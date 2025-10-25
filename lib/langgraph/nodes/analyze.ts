@@ -37,9 +37,9 @@ export async function analyzeNode(state: WorkflowState): Promise<Partial<Workflo
     
     // Generate analysis with Gemini
     const analysis = await analyzeMatches(
-      candidate.name,
+      (candidate as any).name,
       state.parsed_cv,
-      state.rejected_job_details,
+      state.rejected_job_details as any,
       state.consolidated_matches.slice(0, 5),
       matchedJobsData as any[]
     )

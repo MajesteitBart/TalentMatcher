@@ -7,14 +7,14 @@ export async function createWorkflowExecution(
 ) {
   const supabase = createAdminClient()
   
-  const { data: execution, error } = await supabase
+  const { data: execution, error } = await (supabase
     .from('workflow_executions')
     .insert([{
       ...data,
       status: 'queued' as const
-    }])
+    }] as any)
     .select()
-    .single()
+    .single() as any)
   
   if (error) throw error
   return execution as WorkflowExecution
@@ -26,12 +26,12 @@ export async function updateWorkflowExecution(
 ) {
   const supabase = createAdminClient()
   
-  const { data, error } = await supabase
-    .from('workflow_executions')
+  const { data, error } = await ((supabase
+    .from('workflow_executions') as any)
     .update(updates)
     .eq('id', id)
     .select()
-    .single()
+    .single())
   
   if (error) throw error
   return data as WorkflowExecution
@@ -39,18 +39,18 @@ export async function updateWorkflowExecution(
 
 export async function getWorkflowExecution(id: string) {
   const supabase = createAdminClient()
-  
-  const { data, error } = await supabase
+
+  const { data, error } = await (supabase
     .from('workflow_executions')
     .select(`
       *,
       candidate:candidates(*),
       rejected_job:jobs(*),
       match_results:match_results(*)
-    `)
+    `) as any)
     .eq('id', id)
     .single()
-  
+
   if (error) throw error
   return data
 }
@@ -61,15 +61,15 @@ export async function saveMatchResults(
 ) {
   const supabase = createAdminClient()
   
-  const { data, error } = await supabase
+  const { data, error } = await (supabase
     .from('match_results')
     .insert(
       matches.map(match => ({
         ...match,
         workflow_execution_id: workflowExecutionId
-      }))
+      })) as any
     )
-    .select()
+    .select() as any)
   
   if (error) throw error
   return data as MatchResultDB[]

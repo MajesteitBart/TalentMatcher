@@ -5,12 +5,12 @@ import type { Candidate, ParsedCV } from '@/lib/types'
 export async function getCandidateById(candidateId: string) {
   const supabase = createAdminClient()
   
-  const { data, error } = await supabase
+  const { data, error } = await (supabase
     .from('candidates')
     .select(`
       *,
       parsed_cv:parsed_cvs(*)
-    `)
+    `) as any)
     .eq('id', candidateId)
     .single()
   
@@ -23,11 +23,11 @@ export async function createCandidate(
 ) {
   const supabase = createAdminClient()
   
-  const { data, error } = await supabase
+  const { data, error } = await (supabase
     .from('candidates')
-    .insert([candidate])
+    .insert([candidate] as any)
     .select()
-    .single()
+    .single())
   
   if (error) throw error
   return data as Candidate
@@ -36,13 +36,13 @@ export async function createCandidate(
 export async function saveParsedCV(parsedCV: Omit<ParsedCV, 'id' | 'parsed_at' | 'updated_at'>) {
   const supabase = createAdminClient()
   
-  const { data, error } = await supabase
+  const { data, error } = await (supabase
     .from('parsed_cvs')
-    .upsert([parsedCV], {
+    .upsert([parsedCV] as any, {
       onConflict: 'candidate_id'
     })
     .select()
-    .single()
+    .single())
   
   if (error) throw error
   return data as ParsedCV
