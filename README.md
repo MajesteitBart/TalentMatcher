@@ -178,6 +178,7 @@ curl -X POST http://localhost:3000/api/jobs/index
 
 3. Reject the candidate to trigger matching:
 ```bash
+
 curl -X POST http://localhost:3000/api/candidates/reject 
   -H "Content-Type: application/json" 
   -d '{
