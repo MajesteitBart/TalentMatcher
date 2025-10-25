@@ -6,6 +6,7 @@ import { formatDistanceToNow } from 'date-fns'
 import Link from 'next/link'
 import { ArrowLeft, Mail, Phone, Briefcase } from 'lucide-react'
 import { notFound } from 'next/navigation'
+import { CandidateApplications } from '@/components/candidates/candidate-applications'
 
 export default async function CandidateDetailPage({
   params,
@@ -83,47 +84,10 @@ export default async function CandidateDetailPage({
                 <CardTitle>Applications</CardTitle>
               </CardHeader>
               <CardContent>
-                {candidate.applications.length === 0 ? (
-                  <p className="text-gray-500">No applications yet</p>
-                ) : (
-                  <div className="space-y-3">
-                    {candidate.applications.map((application) => (
-                      <div
-                        key={application.id}
-                        className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
-                      >
-                        <div>
-                          <p className="font-medium text-gray-900">
-                            {application.job.title}
-                          </p>
-                          <p className="text-sm text-gray-600">
-                            {application.job.department} • {application.job.location}
-                          </p>
-                        </div>
-                        <div className="text-right">
-                          <span
-                            className={`px-2 py-1 rounded-full text-xs font-medium ${
-                              application.status === 'rejected'
-                                ? 'bg-red-100 text-red-800'
-                                : application.status === 'accepted'
-                                ? 'bg-green-100 text-green-800'
-                                : application.status === 'interviewing'
-                                ? 'bg-blue-100 text-blue-800'
-                                : 'bg-gray-100 text-gray-800'
-                            }`}
-                          >
-                            {application.status}
-                          </span>
-                          {application.rejection_reason && (
-                            <p className="text-xs text-gray-600 mt-1">
-                              {application.rejection_reason}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
+                <CandidateApplications
+                  applications={candidate.applications}
+                  candidate={candidate}
+                />
               </CardContent>
             </Card>
           </div>

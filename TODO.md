@@ -1,8 +1,8 @@
 # Talent Matcher - Development TODO
 
-## ✅ Completed (MVP Frontend - 2025-10-25)
+## ✅ Recently Completed (2025-10-25)
 
-### Database & Backend Integration
+### MVP Frontend - Core Infrastructure
 - [x] Use Supabase MCP to explore database schema
 - [x] Generate TypeScript types from actual database structure
 - [x] Set up Supabase admin client with service role key
@@ -33,9 +33,9 @@
 - [x] MCP-driven development workflow
 - [x] **Fix all TypeScript compilation errors across codebase (2025-10-25)**
 
-## ✅ Completed (Job Management Enhancement - 2025-10-25)
+## ✅ Job Management Enhancement (Completed 2025-10-25)
 
-### Job Management Enhancement
+### Complete Job Management System
 - [x] Job creation form (`/jobs/new`) - Complete form with all required fields
 - [x] Job editing functionality (`/jobs/[id]/edit`) - Full edit capabilities with pre-populated data
 - [x] Job deletion with confirmation - Safe deletion with dependency checking
@@ -45,19 +45,21 @@
 - [x] **Server-side data fetching for proper environment variable access**
 - [x] **Client/Server component architecture separation**
 
+## 🔄 High Priority - In Progress
+
+### Workflow Integration
+- [ ] **Candidate rejection trigger (connect to `/api/candidates/reject`) - HIGH PRIORITY**
+- [ ] Workflow detail pages (`/workflows/[id]`)
+- [ ] Match results visualization
+- [ ] Real-time workflow status updates
+- [ ] Workflow retry mechanisms
+
 ### Candidate Management Enhancement
 - [ ] Candidate creation form
 - [ ] Candidate profile editing
 - [ ] CV file upload handling
 - [ ] Candidate search and filtering
 - [ ] Application status updates
-
-### Workflow Integration
-- [ ] Candidate rejection trigger (connect to `/api/candidates/reject`)
-- [ ] Workflow detail pages (`/workflows/[id]`)
-- [ ] Match results visualization
-- [ ] Real-time workflow status updates
-- [ ] Workflow retry mechanisms
 
 ## 📋 Planned (Post-MVP)
 
@@ -96,10 +98,15 @@
 - [ ] CI/CD pipeline configuration
 - [ ] Security audit and penetration testing
 
-## 🐛 Known Issues
+## 🐛 Technical Debt Resolved
 
-### Technical Debt
-- [x] **Resolve TypeScript compilation errors across codebase (fixed 2025-10-25)**
+### Recently Fixed Issues
+- [x] **TypeScript compilation errors across codebase (fixed 2025-10-25)**
+- [x] **Supabase service role key environment variable access (just completed!)**
+- [x] **Server-side data fetching architecture for environment variables**
+- [x] **Fixed candidates and workflows page data fetching (2025-10-25)**
+
+### Remaining Technical Debt
 - [ ] Implement proper error boundaries around API calls
 - [ ] Add retry logic for failed database operations
 - [ ] Optimize bundle size and implement code splitting
@@ -133,12 +140,13 @@
 
 ---
 
-## Priority Matrix
+## 📊 Priority Matrix
 
 | Feature | Priority | Effort | Impact | Status |
 |----------|----------|---------|---------|---------|
-| Job Creation/Editing | High | Medium | ✅ Completed |
-| Candidate Rejection Trigger | High | Low | 🔄 In Progress |
+| Job Creation/Editing | High | Medium | ✅ **Completed** |
+| Candidate Rejection Trigger | High | Low | 🔄 **High Priority, In Progress** |
+| Workflow Detail Pages | High | Medium | 📋 **Next Priority** |
 | Authentication | High | High | 📋 Planned |
 | Advanced Search | Medium | Medium | 📋 Planned |
 | Real-time Updates | Medium | High | 📋 Planned |
@@ -149,11 +157,27 @@
 
 ## Notes
 
-- MVP frontend demonstrates complete user journey for talent matching
-- Database integration is working with real Supabase instance
-- MCP-driven development significantly accelerated schema understanding
-- Server components resolve environment variable access issues
-- **All TypeScript compilation errors have been resolved (2025-10-25)**
-- Project builds successfully with strict TypeScript mode enabled
-- Current implementation is production-ready for core functionality
-- Focus should be on form creation and API integration for next phase
+### Current Status Overview (2025-10-25)
+- **✅ MVP frontend complete**: Full user journey for talent matching implemented
+- **✅ Database integration working**: Real Supabase instance with proper connectivity
+- **✅ MCP-driven development**: Significantly accelerated schema understanding
+- **✅ Environment variables fixed**: Server-side data fetching architecture resolves access issues
+- **✅ TypeScript compilation**: All errors resolved, project builds successfully
+- **✅ Data fetching resolved**: Candidates and workflows pages now display data correctly
+- **🔄 Next focus**: Candidate rejection trigger integration (high priority, low effort)
+- **📋 Following priorities**: Workflow detail pages, then candidate management forms
+
+### Development Insights
+- Server/Client component separation is crucial for environment variable access
+- Supabase service role key must be accessed server-side for security
+- Complex Supabase queries with nested joins can fail silently - use simpler queries
+- Separate fetches for related data are more reliable than complex joins
+- Job management system is production-ready with full CRUD operations
+- Workflow monitoring page properly displays real-time status with detailed error messages
+- Next logical step is connecting candidate rejection to the existing API endpoint
+
+### Critical Lessons Learned (2025-10-25)
+1. **Supabase Query Complexity**: Complex nested queries with multiple joins (`candidate: candidates (...)`, `job: jobs (...)`) can fail silently and return empty arrays, even when individual simple queries work perfectly.
+2. **Debugging Strategy**: Create debug endpoints to isolate data fetching issues - the problem was not with database connectivity but with query complexity.
+3. **Solution Pattern**: Break complex queries into separate, simpler queries and combine data in JavaScript. This is more reliable and easier to debug.
+4. **Error Handling**: Always check for empty results even when queries don't throw explicit errors.

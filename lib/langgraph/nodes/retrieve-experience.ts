@@ -30,8 +30,7 @@ export async function retrieveExperienceNode(state: WorkflowState): Promise<Part
     })
     
     return {
-      experience_matches: matches,
-      current_node: 'retrieve-experience'
+      experience_matches: matches
     }
     
   } catch (error) {

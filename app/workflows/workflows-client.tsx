@@ -117,11 +117,11 @@ export default function WorkflowsClient({ initialWorkflows }: WorkflowsClientPro
                     <div>
                       <CardTitle className="text-lg flex items-center space-x-2">
                         {getStatusIcon(workflow.status)}
-                        <span>{workflow.candidate.name}</span>
+                        <span>{workflow.candidate?.name || 'Unknown Candidate'}</span>
                       </CardTitle>
-                      <p className="text-gray-600">{workflow.candidate.email}</p>
+                      <p className="text-gray-600">{workflow.candidate?.email || 'No email available'}</p>
                       <p className="text-sm text-gray-500">
-                        Rejected from: {workflow.rejected_job.title} at {workflow.rejected_job.department}
+                        Rejected from: {workflow.rejected_job?.title || 'Unknown Position'} at {workflow.rejected_job?.department || 'Unknown Department'}
                       </p>
                     </div>
                     <div className="flex items-center space-x-2">

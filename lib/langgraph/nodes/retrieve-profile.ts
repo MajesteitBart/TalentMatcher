@@ -33,8 +33,7 @@ export async function retrieveProfileNode(state: WorkflowState): Promise<Partial
     })
     
     return {
-      profile_matches: matches,
-      current_node: 'retrieve-profile'
+      profile_matches: matches
     }
     
   } catch (error) {

@@ -33,8 +33,7 @@ export async function retrieveSkillsNode(state: WorkflowState): Promise<Partial<
     })
     
     return {
-      skills_matches: matches,
-      current_node: 'retrieve-skills'
+      skills_matches: matches
     }
     
   } catch (error) {
