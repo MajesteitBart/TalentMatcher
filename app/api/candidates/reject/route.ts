@@ -44,8 +44,8 @@ export async function POST(request: NextRequest): Promise<NextResponse<APIRespon
       .update({
         status: 'rejected',
         rejected_at: new Date().toISOString(),
-        rejection_reason
-      })
+        rejection_reason: rejection_reason || null
+      } as any)
       .eq('id', application_id)
     
     if (updateError) {
