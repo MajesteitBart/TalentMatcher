@@ -75,6 +75,11 @@ create index on public.job_embeddings
 create index idx_job_embeddings_job_id on public.job_embeddings(job_id);
 create index idx_job_embeddings_type on public.job_embeddings(embedding_type);
 
+-- Add unique constraint for upsert operations
+alter table public.job_embeddings
+add constraint unique_job_embedding_type
+unique (job_id, embedding_type);
+
 alter table public.job_embeddings enable row level security;
 
 create policy "Job embeddings are viewable by authenticated users"
