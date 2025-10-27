@@ -12,8 +12,25 @@ export async function getCandidates(): Promise<CandidateWithApplications[]> {
       name,
       email,
       cv_text,
+      cv_file_url,
+      phone,
+      linkedin_url,
       created_at,
-      updated_at
+      updated_at,
+      applications (
+        id,
+        status,
+        applied_at,
+        rejected_at,
+        rejection_reason,
+        job: job_id (
+          id,
+          title,
+          department,
+          location,
+          description
+        )
+      )
     `)
     .order('created_at', { ascending: false })
 
@@ -28,13 +45,11 @@ export async function getCandidates(): Promise<CandidateWithApplications[]> {
   }
 
   console.log(`Found ${candidatesData.length} candidates`)
+  console.log('Candidates data:', candidatesData[0])
 
   // For now, return candidates with empty applications array
   // TODO: Fix the applications join later
-  return candidatesData.map((candidate): CandidateWithApplications => ({
-    ...candidate,
-    applications: []
-  }))
+  return candidatesData
 }
 
 export async function getCandidate(id: string): Promise<CandidateWithApplications | null> {
@@ -58,7 +73,7 @@ export async function getCandidate(id: string): Promise<CandidateWithApplication
         applied_at,
         rejected_at,
         rejection_reason,
-        job: jobs (
+        job: job_id (
           id,
           title,
           department,

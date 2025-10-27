@@ -32,3 +32,5 @@ process.on('SIGTERM', async () => {
   await indexingWorker.close()
   process.exit(0)
 })
+
+logger.info('Indexing worker is running and waiting for jobs')

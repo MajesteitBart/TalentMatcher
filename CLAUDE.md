@@ -17,13 +17,22 @@ docker-compose up -d                          # Start Redis for job queue
 
 ### Development
 ```bash
-npm run dev                                   # Start Next.js development server
-npm run worker:workflow                       # Start background workers (separate terminal)
-npm run worker:indexing                       # Start indexing workers (optional)
+# Quick Start - All Services at Once (Recommended)
+npm run dev:concurrent                        # Start Next.js + both workers concurrently
+npm run dev:all                               # Alternative: Start all services using bash script
+
+# Individual Services (for separate terminals)
+npm run dev                                   # Start Next.js development server only
+npm run worker:workflow                       # Start workflow worker only
+npm run worker:indexing                       # Start indexing worker only
+
+# Other Commands
 npm run lint                                  # Run ESLint
 npm run build                                 # Build for production
 npm run start                                 # Start production server
 ```
+
+**Note**: `npm run dev:concurrent` starts all three services (Next.js server, workflow worker, and indexing worker) in a single terminal with color-coded output. Press Ctrl+C to stop all services at once.
 
 ### Testing Workflow
 ```bash

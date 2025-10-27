@@ -14,9 +14,11 @@ export default async function CandidatesPage() {
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <h1 className="text-3xl font-bold text-gray-900">Candidates</h1>
-          <Button className="flex items-center space-x-2">
-            <Plus className="w-4 h-4" />
-            <span>Add Candidate</span>
+          <Button asChild className="flex items-center space-x-2">
+            <Link href="/candidates/add">
+              <Plus className="w-4 h-4" />
+              <span>Add Candidate</span>
+            </Link>
           </Button>
         </div>
 
@@ -29,9 +31,11 @@ export default async function CandidatesPage() {
               <p className="text-gray-600 mb-6">
                 Get started by adding your first candidate to the system.
               </p>
-              <Button className="flex items-center space-x-2">
-                <Plus className="w-4 h-4" />
-                <span>Add Candidate</span>
+              <Button asChild className="flex items-center space-x-2">
+                <Link href="/candidates/add">
+                  <Plus className="w-4 h-4" />
+                  <span>Add Candidate</span>
+                </Link>
               </Button>
             </CardContent>
           </Card>
@@ -52,7 +56,7 @@ export default async function CandidatesPage() {
                         <p className="text-gray-600">{candidate.email}</p>
                       </div>
                       <div className="flex space-x-2">
-                        <Button variant="outline" size="sm" asChild>
+                        <Button size="sm" asChild>
                           <Link href={`/candidates/${candidate.id}`}>
                             <Eye className="w-4 h-4 mr-2" />
                             View
@@ -72,7 +76,7 @@ export default async function CandidatesPage() {
                   <CardContent>
                     <div className="space-y-4">
                       <div>
-                        <h4 className="text-sm font-medium text-gray-900 mb-2">
+                        <h4 className="text-sm font-semibold text-gray-900 mb-2">
                           CV Preview
                         </h4>
                         <p className="text-sm text-gray-600 line-clamp-3">
@@ -82,7 +86,7 @@ export default async function CandidatesPage() {
 
                       {latestApplication && (
                         <div>
-                          <h4 className="text-sm font-medium text-gray-900 mb-2">
+                          <h4 className="text-sm font-semibold text-gray-900 mb-2">
                             Latest Application
                           </h4>
                           <div className="flex items-center justify-between text-sm">

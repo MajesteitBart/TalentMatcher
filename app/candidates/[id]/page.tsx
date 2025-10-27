@@ -24,7 +24,7 @@ export default async function CandidateDetailPage({
     <LayoutWrapper>
       <div className="space-y-6">
         <div className="flex items-center space-x-4">
-          <Button variant="outline" size="sm" asChild>
+          <Button size="sm" asChild>
             <Link href="/candidates">
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Candidates

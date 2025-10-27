@@ -118,7 +118,7 @@ export function JobsClient({ initialJobs, initialCompanies }: JobsClientProps) {
         <div className="flex justify-between items-center">
           <h1 className="text-3xl font-bold text-gray-900">Jobs</h1>
           <div className="flex space-x-4">
-            <Button variant="outline" onClick={() => setShowIndexModal(true)}>
+            <Button onClick={() => setShowIndexModal(true)}>
               Index All Jobs
             </Button>
             <Button className="flex items-center space-x-2" asChild>
@@ -226,7 +226,7 @@ export function JobsClient({ initialJobs, initialCompanies }: JobsClientProps) {
                       >
                         {job.status}
                       </span>
-                      <Button variant="outline" size="sm" asChild>
+                      <Button size="sm" asChild>
                         <Link href={`/jobs/${job.id}/edit`}>
                           <Edit className="w-4 h-4 mr-2" />
                           Edit

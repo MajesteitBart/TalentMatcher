@@ -125,7 +125,7 @@ export function BulkJobActions({
             </label>
           </div>
           {selectedJobs.length > 0 && (
-            <Button variant="outline" size="sm" onClick={onClearSelection}>
+            <Button size="sm" onClick={onClearSelection}>
               Clear Selection
             </Button>
           )}

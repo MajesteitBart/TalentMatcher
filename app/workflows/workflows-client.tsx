@@ -132,7 +132,7 @@ export default function WorkflowsClient({ initialWorkflows }: WorkflowsClientPro
                       >
                         {workflow.status}
                       </span>
-                      <Button variant="outline" size="sm" asChild>
+                      <Button size="sm" asChild>
                         <Link href={`/workflows/${workflow.id}`}>
                           View Details
                         </Link>

@@ -149,7 +149,7 @@ export function JobForm({ job, companies }: JobFormProps) {
       <div className="max-w-4xl mx-auto space-y-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
-            <Button variant="outline" size="sm" asChild>
+            <Button size="sm" asChild>
               <Link href="/jobs">
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 Back to Jobs
@@ -345,7 +345,7 @@ export function JobForm({ job, companies }: JobFormProps) {
 
               {/* Form Actions */}
               <div className="flex justify-end space-x-4 pt-6 border-t">
-                <Button variant="outline" type="button" asChild>
+                <Button type="button" asChild>
                   <Link href="/jobs">Cancel</Link>
                 </Button>
                 <Button type="submit" disabled={loading} className="flex items-center space-x-2">

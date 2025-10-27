@@ -99,7 +99,7 @@ export default async function DashboardPage() {
             <CardHeader>
               <div className="flex justify-between items-center">
                 <CardTitle>Recent Candidates</CardTitle>
-                <Button variant="outline" size="sm" asChild>
+                <Button size="sm" asChild>
                   <Link href="/candidates">
                     View All <ArrowRight className="w-4 h-4 ml-2" />
                   </Link>
@@ -147,7 +147,7 @@ export default async function DashboardPage() {
             <CardHeader>
               <div className="flex justify-between items-center">
                 <CardTitle>Recent Workflow Activity</CardTitle>
-                <Button variant="outline" size="sm" asChild>
+                <Button size="sm" asChild>
                   <Link href="/workflows">
                     View All <ArrowRight className="w-4 h-4 ml-2" />
                   </Link>

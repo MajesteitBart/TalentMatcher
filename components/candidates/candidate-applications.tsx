@@ -66,23 +66,21 @@ export function CandidateApplications({ applications, candidate }: CandidateAppl
       {applications.map((application) => (
         <div
           key={application.id}
-          className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+          className="flex flex-col justify-between p-3 bg-gray-50 rounded-lg space-y-2 "
         >
           <div className="flex-1">
-            <p className="font-medium text-gray-900">
+            <p className="lg:text-lg font-medium text-gray-900">
               {application.job.title}
             </p>
-            <p className="text-sm text-gray-600">
-              {application.job.department} • {application.job.location}
-            </p>
+            
           </div>
-          <div className="flex items-center space-x-2">
+          
             <RejectCandidateButton
               application={application}
               candidate={candidate}
               onReject={handleRejectCandidate}
             />
-          </div>
+          
         </div>
       ))}
     </div>

@@ -55,8 +55,7 @@ export async function getWorkflowExecutions(): Promise<WorkflowExecutionWithDeta
   return workflowsData.map(workflow => ({
     ...workflow,
     candidate: candidatesData?.find(c => c.id === workflow.candidate_id) || null,
-    rejected_job: jobsData?.find(j => j.id === workflow.rejected_job_id) || null,
-    match_results: []
+    rejected_job: jobsData?.find(j => j.id === workflow.rejected_job_id) || null
   }))
 }
 

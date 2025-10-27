@@ -3127,7 +3127,7 @@ export function NavBar({ user }: NavBarProps) {
           <div className="flex items-center space-x-4">
             <span className="text-sm text-gray-600">{user.email}</span>
             <form action="/auth/signout" method="post">
-              <Button variant="outline" type="submit">
+              <Button type="submit">
                 Sign Out
               </Button>
             </form>
@@ -3306,7 +3306,7 @@ export function RecentWorkflows({ workflows }: RecentWorkflowsProps) {
                   </p>
                 </div>
                 <Link href={`/dashboard/workflows/${workflow.id}`}>
-                  <Button variant="outline" size="sm">
+                  <Button size="sm">
                     View Details
                   </Button>
                 </Link>
@@ -3490,7 +3490,7 @@ export function MatchResults({ matches }: MatchResultsProps) {
                 </div>
               </div>
               <Link href={`/dashboard/jobs/${match.job_id}`}>
-                <Button variant="outline" size="sm">
+                <Button size="sm">
                   View Job
                 </Button>
               </Link>
@@ -3626,7 +3626,7 @@ export function RejectCandidateDialog({
         </div>
         
         <DialogFooter>
-          <Button variant="outline" onClick={() => setOpen(false)} disabled={loading}>
+          <Button onClick={() => setOpen(false)} disabled={loading}>
             Cancel
           </Button>
           <Button onClick={handleReject} disabled={loading}>

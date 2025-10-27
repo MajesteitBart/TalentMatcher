@@ -125,12 +125,17 @@ export function RejectCandidateButton({ application, candidate, onReject }: Reje
 
   if (application.status === 'rejected') {
     return (
-      <Badge variant="destructive">
-        Rejected
-        {application.rejection_reason && (
-          <span className="ml-1 text-xs">({application.rejection_reason})</span>
-        )}
-      </Badge>
+      <div>
+        <Button 
+          variant="destructive"
+          size="sm"
+          className="flex-1"
+        >
+          Rejected
+          
+        </Button>
+        <p className="mt-2 text-sm text-gray-600">{application.rejection_reason}</p>
+      </div>
     )
   }
 
