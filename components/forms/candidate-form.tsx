@@ -283,7 +283,7 @@ export function CandidateForm({ candidate, companies }: CandidateFormProps) {
                   placeholder="e.g. https://example.com/cv.pdf"
                 />
                 <p className="text-sm text-gray-500 mt-1">
-                  URL to the candidate's CV file if hosted elsewhere.
+                  URL to the candidate&apos;s CV file if hosted elsewhere.
                 </p>
               </div>
 

@@ -47,6 +47,8 @@ export default async function CandidatesPage() {
                 (app) => app.status === 'rejected'
               )
 
+          
+
               return (
                 <Card key={candidate.id}>
                   <CardHeader>

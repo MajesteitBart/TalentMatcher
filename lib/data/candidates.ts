@@ -73,6 +73,22 @@ export async function getCandidate(id: string): Promise<CandidateWithApplication
         applied_at,
         rejected_at,
         rejection_reason,
+        workflow_executions(
+          id,
+          status,
+          created_at,
+          alternative_jobs: match_results(
+            job: job_id(
+              id,
+              title,
+              department,
+              location,
+              description
+            ),
+            composite_score,
+            match_reasons
+          )
+        ),
         job: job_id (
           id,
           title,

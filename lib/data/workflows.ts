@@ -38,8 +38,8 @@ export async function getWorkflowExecutions(): Promise<WorkflowExecutionWithDeta
   console.log(`Found ${workflowsData.length} workflow executions`)
 
   // Fetch basic candidate and job information separately
-  const candidateIds = [...new Set(workflowsData.map(w => w.candidate_id))]
-  const jobIds = [...new Set(workflowsData.map(w => w.rejected_job_id))]
+  const candidateIds = Array.from(new Set(workflowsData.map((w: any) => w.candidate_id)))
+  const jobIds = Array.from(new Set(workflowsData.map((w: any) => w.rejected_job_id)))
 
   const { data: candidatesData } = await supabase
     .from('candidates')
@@ -52,10 +52,10 @@ export async function getWorkflowExecutions(): Promise<WorkflowExecutionWithDeta
     .in('id', jobIds)
 
   // Combine the data
-  return workflowsData.map(workflow => ({
+  return workflowsData.map((workflow: any) => ({
     ...workflow,
-    candidate: candidatesData?.find(c => c.id === workflow.candidate_id) || null,
-    rejected_job: jobsData?.find(j => j.id === workflow.rejected_job_id) || null
+    candidate: candidatesData?.find((c: any) => c.id === workflow.candidate_id) || null,
+    rejected_job: jobsData?.find((j: any) => j.id === workflow.rejected_job_id) || null
   }))
 }
 

@@ -45,8 +45,17 @@ export async function getWorkflowExecution(id: string) {
     .select(`
       *,
       candidate:candidates(*),
-      rejected_job:jobs(*),
-      match_results:match_results(*)
+      rejected_job:jobs(
+        *,
+        company:companies(*)
+      ),
+      match_results:match_results(
+        *,
+        job:jobs(
+          *,
+          company:companies(*)
+        )
+      )
     `) as any)
     .eq('id', id)
     .single()

@@ -106,8 +106,8 @@ export async function POST(request: NextRequest): Promise<NextResponse<APIRespon
       applicationId: data.id,
       candidateId: data.candidate_id,
       jobId: data.job_id,
-      candidateName: candidate.name,
-      jobTitle: job.title
+      candidateName: (candidate as any)?.name,
+      jobTitle: (job as any)?.title
     })
 
     return NextResponse.json({

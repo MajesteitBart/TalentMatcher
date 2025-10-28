@@ -7,6 +7,7 @@ import Link from 'next/link'
 import { ArrowLeft, Mail, Phone, Briefcase } from 'lucide-react'
 import { notFound } from 'next/navigation'
 import { CandidateApplications } from '@/components/candidates/candidate-applications'
+import { AlternativeMatches } from '@/components/candidates/alternative-matches'
 
 export default async function CandidateDetailPage({
   params,
@@ -15,6 +16,8 @@ export default async function CandidateDetailPage({
 }) {
   const { id } = await params
   const candidate = await getCandidate(id)
+
+  console.log('Fetched candidate:', JSON.stringify(candidate?.applications, null, 2))
 
   if (!candidate) {
     notFound()
@@ -92,7 +95,7 @@ export default async function CandidateDetailPage({
             </Card>
           </div>
 
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-2 space-y-6">
             <Card>
               <CardHeader>
                 <CardTitle>CV Content</CardTitle>
@@ -105,6 +108,27 @@ export default async function CandidateDetailPage({
                 </div>
               </CardContent>
             </Card>
+
+            {/* Alternative Job Matches */}
+            {candidate.applications?.some(app =>
+              app.workflow_executions?.some(exec =>
+                exec.alternative_jobs && exec.alternative_jobs.length > 0
+              )
+            ) && (
+              <AlternativeMatches
+                matches={candidate.applications
+                  .flatMap(app => app.workflow_executions || [])
+                  .flatMap(exec => exec.alternative_jobs || [])
+                  .filter((job, index, self) =>
+                    self.findIndex(j => j.job.id === job.job.id) === index
+                  )
+                  .map(job => ({
+                    ...job.job,
+                    composite_score: job?.composite_score
+                  }))}
+                candidateName={candidate.name}
+              />
+            )}
           </div>
         </div>
       </div>

@@ -10,7 +10,7 @@ import { Select } from '@/components/ui/select'
 import type { JobWithCompany } from '@/lib/types/database'
 import { formatDistanceToNow } from 'date-fns'
 import Link from 'next/link'
-import { Plus, Edit, Trash2, Briefcase, MapPin, Clock, Users, Search } from 'lucide-react'
+import { Plus, Edit, Trash2, Eye, Briefcase, MapPin, Clock, Users, Search } from 'lucide-react'
 
 interface Company {
   id: string
@@ -226,6 +226,12 @@ export function JobsClient({ initialJobs, initialCompanies }: JobsClientProps) {
                       >
                         {job.status}
                       </span>
+                      <Button variant="outline" size="sm" asChild>
+                        <Link href={`/jobs/${job.id}`}>
+                          <Eye className="w-4 h-4 mr-2" />
+                          View
+                        </Link>
+                      </Button>
                       <Button size="sm" asChild>
                         <Link href={`/jobs/${job.id}/edit`}>
                           <Edit className="w-4 h-4 mr-2" />

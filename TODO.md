@@ -45,14 +45,31 @@
 - [x] **Server-side data fetching for proper environment variable access**
 - [x] **Client/Server component architecture separation**
 
+## ✅ Recently Completed (2025-10-28)
+
+### Workflow Integration
+- [x] **Candidate rejection trigger (connect to `/api/candidates/reject`) - HIGH PRIORITY**
+- [x] Workflow detail pages (`/workflows/[id]`)
+
 ## 🔄 High Priority - In Progress
 
 ### Workflow Integration
-- [ ] **Candidate rejection trigger (connect to `/api/candidates/reject`) - HIGH PRIORITY**
-- [ ] Workflow detail pages (`/workflows/[id]`)
 - [ ] Match results visualization
 - [ ] Real-time workflow status updates
 - [ ] Workflow retry mechanisms
+
+### Job Detail Pages
+- [ ] **Job detail page (`/jobs/[id]`) - to view job details and associated candidates**
+
+### Settings & Company Management
+- [ ] **Settings page (`/settings`) - add, edit, or remove companies**
+- [ ] **API key generation and management in settings**
+- [ ] **API key authentication and security**
+
+### Documentation & API Integration
+- [ ] **Documentation page (`/docs`) - user guide and API reference**
+- [ ] **API integration examples and tutorials**
+- [ ] **How-to guides for connecting external applications**
 
 ### Candidate Management Enhancement
 - [ ] Candidate creation form
@@ -145,8 +162,12 @@
 | Feature | Priority | Effort | Impact | Status |
 |----------|----------|---------|---------|---------|
 | Job Creation/Editing | High | Medium | ✅ **Completed** |
-| Candidate Rejection Trigger | High | Low | 🔄 **High Priority, In Progress** |
-| Workflow Detail Pages | High | Medium | 📋 **Next Priority** |
+| Candidate Rejection Trigger | High | Low | ✅ **Completed (2025-10-28)** |
+| Workflow Detail Pages | High | Medium | ✅ **Completed (2025-10-28)** |
+| Job Detail Page (`/jobs/[id]`) | High | Low | 📋 **Next Priority** |
+| Settings Page - Company Management | High | Medium | 📋 **Next Priority** |
+| API Key Generation & Management | High | Medium | 📋 **Next Priority** |
+| Documentation Page & API Reference | Medium | Medium | 📋 **Next Priority** |
 | Authentication | High | High | 📋 Planned |
 | Advanced Search | Medium | Medium | 📋 Planned |
 | Real-time Updates | Medium | High | 📋 Planned |
