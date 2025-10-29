@@ -32,3 +32,23 @@ export async function getCompany(id: string) {
 
   return data
 }
+
+export async function createCompany(companyData: { name: string; domain?: string | null }) {
+  const supabase = createAdminClient()
+
+  const { data, error } = await supabase
+    .from('companies')
+    .insert({
+      name: companyData.name,
+      domain: companyData.domain || null,
+    })
+    .select()
+    .single()
+
+  if (error) {
+    console.error('Error creating company:', error)
+    throw new Error(error.message)
+  }
+
+  return data
+}

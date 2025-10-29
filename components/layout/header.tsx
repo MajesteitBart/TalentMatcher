@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Users, Briefcase, Activity } from 'lucide-react'
+import { Users, Briefcase, Activity, Settings } from 'lucide-react'
 
 export function Header() {
   return (
@@ -33,6 +33,13 @@ export function Header() {
             >
               <Activity className="w-4 h-4" />
               <span>Workflows</span>
+            </Link>
+            <Link
+              href="/settings"
+              className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
+            >
+              <Settings className="w-4 h-4" />
+              <span>Settings</span>
             </Link>
           </nav>
         </div>

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { LayoutWrapper } from '@/components/layout/layout-wrapper'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -33,12 +33,44 @@ export function JobsClient({ initialJobs, initialCompanies }: JobsClientProps) {
   const [showIndexModal, setShowIndexModal] = useState(false)
   const [selectedCompany, setSelectedCompany] = useState('')
 
+  // Debug: Log initial data
+  useEffect(() => {
+    console.log('JobsClient initialized with:', {
+      jobsCount: initialJobs.length,
+      companiesCount: initialCompanies.length,
+      jobs: initialJobs.map(job => ({
+        id: job.id,
+        title: job.title,
+        companyId: job.company.id,
+        companyName: job.company.name
+      })),
+      companies: initialCompanies.map(company => ({
+        id: company.id,
+        name: company.name
+      }))
+    })
+  }, [initialJobs, initialCompanies])
+
+  
   const filteredJobs = jobs.filter(job => {
     const matchesSearch = job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          job.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          job.company.name.toLowerCase().includes(searchTerm.toLowerCase())
     const matchesStatus = statusFilter === 'all' || job.status === statusFilter
-    const matchesCompany = companyFilter === 'all' || job.company_id === companyFilter
+    // Use company.id from nested company data instead of job.company_id
+    const matchesCompany = companyFilter === 'all' || job.company.id === companyFilter
+
+    // Debug logging for filtering
+    if (companyFilter !== 'all') {
+      console.log('Filtering job:', {
+        jobId: job.id,
+        jobTitle: job.title,
+        companyId: job.company.id,
+        companyName: job.company.name,
+        filterValue: companyFilter,
+        matchesCompany
+      })
+    }
 
     return matchesSearch && matchesStatus && matchesCompany
   })
@@ -167,7 +199,10 @@ export function JobsClient({ initialJobs, initialCompanies }: JobsClientProps) {
                 <Select
                   id="company"
                   value={companyFilter}
-                  onChange={(e) => setCompanyFilter(e.target.value)}
+                  onChange={(e) => {
+                    console.log('Company filter changed from', companyFilter, 'to', e.target.value)
+                    setCompanyFilter(e.target.value)
+                  }}
                 >
                   <option value="all">All Companies</option>
                   {companies.map((company) => (
