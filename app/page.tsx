@@ -8,6 +8,10 @@ import type { CandidateWithApplications, JobWithCompany, WorkflowExecutionWithDe
 import { Users, Briefcase, Activity, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 
+// Force dynamic rendering - no caching
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export default async function DashboardPage() {
   const [candidatesData, jobsData, workflowsData] = await Promise.all([
     getCandidates(),

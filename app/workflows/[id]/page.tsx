@@ -2,6 +2,10 @@ import { LayoutWrapper } from '@/components/layout/layout-wrapper'
 import { WorkflowDetail } from '@/components/workflows/workflow-detail'
 import { notFound } from 'next/navigation'
 
+// Force dynamic rendering - no caching
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 interface WorkflowDetailPageProps {
   params: Promise<{ id: string }>
 }

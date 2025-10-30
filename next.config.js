@@ -5,7 +5,13 @@ const nextConfig = {
       bodySizeLimit: '10mb',
     },
   },
-  webpack: (config, { isServer }) => {
+  // Fix caching issues when running with workers
+  reactStrictMode: true,
+  swcMinify: true,
+  compiler: {
+    removeConsole: false,
+  },
+  webpack: (config, { isServer, dev }) => {
     // Fix for canvas and other node modules
     if (!isServer) {
       config.resolve.fallback = {
@@ -15,6 +21,18 @@ const nextConfig = {
         tls: false,
       };
     }
+
+    // Fix caching issues in development
+    if (dev) {
+      config.watchOptions = {
+        poll: 1000,
+        aggregateTimeout: 300,
+      };
+
+      // Disable webpack cache in development to prevent conflicts
+      config.cache = false;
+    }
+
     return config;
   },
 };

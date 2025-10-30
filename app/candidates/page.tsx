@@ -6,6 +6,10 @@ import { formatDistanceToNow } from 'date-fns'
 import Link from 'next/link'
 import { Plus, Eye, ArrowRight } from 'lucide-react'
 
+// Force dynamic rendering - no caching
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export default async function CandidatesPage() {
   const candidates = await getCandidates()
 

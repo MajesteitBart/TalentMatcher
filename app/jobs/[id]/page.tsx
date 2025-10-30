@@ -2,6 +2,10 @@ import { notFound } from 'next/navigation'
 import { JobDetailClient } from './job-detail-client'
 import { getJob } from '@/lib/data/jobs'
 
+// Force dynamic rendering - no caching
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 interface PageProps {
   params: {
     id: string

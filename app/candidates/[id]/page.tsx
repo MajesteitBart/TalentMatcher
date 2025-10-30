@@ -9,6 +9,10 @@ import { notFound } from 'next/navigation'
 import { CandidateApplications } from '@/components/candidates/candidate-applications'
 import { AlternativeMatches } from '@/components/candidates/alternative-matches'
 
+// Force dynamic rendering - no caching
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export default async function CandidateDetailPage({
   params,
 }: {

@@ -2,6 +2,10 @@ import { JobForm } from '@/components/forms/job-form'
 import { getJob, getCompanies } from '@/lib/data/jobs'
 import { notFound } from 'next/navigation'
 
+// Force dynamic rendering - no caching
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 interface PageProps {
   params: {
     id: string

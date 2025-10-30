@@ -10,6 +10,7 @@ import { Select } from '@/components/ui/select'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Search, User, Mail, Calendar, FileText, ExternalLink, ChevronLeft, ChevronRight, ChevronUp, ChevronDown } from 'lucide-react'
 import { toast } from 'sonner'
+import { ApplicationStatusDropdown } from '@/components/applications/application-status-dropdown'
 
 interface Candidate {
   id: string
@@ -61,6 +62,7 @@ export function CandidateListForJob({ jobId }: CandidateListForJobProps) {
   const [sortBy, setSortBy] = useState('applied_at')
   const [sortOrder, setSortOrder] = useState('desc')
   const [currentPage, setCurrentPage] = useState(1)
+  const [refreshKey, setRefreshKey] = useState(0)
   const [pagination, setPagination] = useState({
     page: 1,
     per_page: 10,
@@ -129,10 +131,11 @@ export function CandidateListForJob({ jobId }: CandidateListForJobProps) {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'pending': return 'bg-yellow-100 text-yellow-800'
-      case 'reviewing': return 'bg-blue-100 text-blue-800'
-      case 'interviewing': return 'bg-purple-100 text-purple-800'
-      case 'accepted': return 'bg-green-100 text-green-800'
+      case 'applied': return 'bg-blue-100 text-blue-800'
+      case 'under_review': return 'bg-yellow-100 text-yellow-800'
+      case 'interview_scheduled': return 'bg-purple-100 text-purple-800'
+      case 'offer_extended': return 'bg-green-100 text-green-800'
+      case 'hired': return 'bg-emerald-100 text-emerald-800'
       case 'rejected': return 'bg-red-100 text-red-800'
       default: return 'bg-gray-100 text-gray-800'
     }
@@ -160,6 +163,13 @@ export function CandidateListForJob({ jobId }: CandidateListForJobProps) {
     setCurrentPage(page)
   }
 
+  const handleStatusChange = (newStatus: string, rejectionReason?: string) => {
+    // Refresh the candidate list to show updated status
+    setRefreshKey(prev => prev + 1)
+    toast.success(`Application status updated to ${newStatus}`)
+    fetchCandidates()
+  }
+
   if (loading) {
     return (
       <div className="flex items-center justify-center py-8">
@@ -184,7 +194,7 @@ export function CandidateListForJob({ jobId }: CandidateListForJobProps) {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" key={refreshKey}>
       {/* Filters and Search */}
       <div className="flex flex-col sm:flex-row gap-4">
         <div className="flex-1">
@@ -205,10 +215,11 @@ export function CandidateListForJob({ jobId }: CandidateListForJobProps) {
             className="w-[150px]"
           >
             <option value="all">All Status</option>
-            <option value="pending">Pending</option>
-            <option value="reviewing">Reviewing</option>
-            <option value="interviewing">Interviewing</option>
-            <option value="accepted">Accepted</option>
+            <option value="applied">Applied</option>
+            <option value="under_review">Under Review</option>
+            <option value="interview_scheduled">Interview Scheduled</option>
+            <option value="offer_extended">Offer Extended</option>
+            <option value="hired">Hired</option>
             <option value="rejected">Rejected</option>
           </Select>
         </div>
@@ -259,9 +270,12 @@ export function CandidateListForJob({ jobId }: CandidateListForJobProps) {
                   </div>
                 </TableCell>
                 <TableCell>
-                  <Badge className={getStatusColor(candidate.application.status)}>
-                    {candidate.application.status}
-                  </Badge>
+                  <ApplicationStatusDropdown
+                    applicationId={candidate.application.id}
+                    currentStatus={candidate.application.status}
+                    onStatusChange={handleStatusChange}
+                    showFullLabel={false}
+                  />
                   {candidate.application.rejected_at && (
                     <div className="text-xs text-gray-500 mt-1">
                       Rejected: {formatDate(candidate.application.rejected_at)}
