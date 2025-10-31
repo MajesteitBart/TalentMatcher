@@ -65,14 +65,14 @@ export function SidebarLayout({ children }: SidebarLayoutProps) {
                 <Link href="/">
                   <div className="flex aspect-square size-8 items-center justify-center overflow-hidden rounded-lg">
                     <img
-                      src="/icon.png"
+                      src="/icon.svg"
                       alt="Talent Matcher Logo"
                       className="h-full w-full object-cover"
                     />
                   </div>
                   <div className="flex flex-col gap-0.5 leading-none">
-                    <span className="font-semibold">Talent Matcher</span>
-                    <span className="text-xs">AI Platform</span>
+                    <span className="font-bold">Talent Matcher</span>
+                    
                   </div>
                 </Link>
               </SidebarMenuButton>
