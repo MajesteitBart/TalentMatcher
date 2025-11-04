@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge'
 import { ArrowLeft, Edit, Trash2, Users, Briefcase, MapPin, Clock } from 'lucide-react'
 import { toast } from 'sonner'
 import type { JobWithCompany } from '@/lib/types/database'
+import { LayoutWrapper } from '@/components/layout/layout-wrapper'
 
 interface JobDetailClientProps {
   job: JobWithCompany
@@ -84,28 +85,13 @@ export function JobDetailClient({ job }: JobDetailClientProps) {
     })
   }
 
-  const getExperienceLevelColor = (level: string) => {
-    switch (level) {
-      case 'junior': return 'bg-green-100 text-green-800'
-      case 'mid': return 'bg-blue-100 text-blue-800'
-      case 'senior': return 'bg-purple-100 text-purple-800'
-      case 'lead': return 'bg-orange-100 text-orange-800'
-      default: return 'bg-gray-100 text-gray-800'
-    }
-  }
-
-  const getJobTypeColor = (type: string) => {
-    switch (type) {
-      case 'full-time': return 'bg-indigo-100 text-indigo-800'
-      case 'part-time': return 'bg-yellow-100 text-yellow-800'
-      case 'contract': return 'bg-red-100 text-red-800'
-      case 'internship': return 'bg-pink-100 text-pink-800'
-      default: return 'bg-gray-100 text-gray-800'
-    }
-  }
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-6xl">
+    <LayoutWrapper>
+      
+    <div className="container mx-auto px-4 py-8 max-w-6xl ">
+      <div className="flex items-center justify-between mb-4">
+      <div className="space-y-6 flex-1">
       {/* Header with actions */}
       <Button
             variant="outline"
@@ -115,14 +101,9 @@ export function JobDetailClient({ job }: JobDetailClientProps) {
             <ArrowLeft className="h-4 w-4" />
             <span>Back</span>
           </Button>
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center space-x-4">
-          
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">{job.title}</h1>
-            <p className="text-lg text-gray-600">{job.company?.name}</p>
-          </div>
-        </div>
+     
+       
+      </div>
 
         <div className="flex items-center space-x-2">
           <Button
@@ -142,30 +123,9 @@ export function JobDetailClient({ job }: JobDetailClientProps) {
             <Trash2 className="h-4 w-4" />
             <span>{isDeleting ? 'Deleting...' : 'Delete'}</span>
           </Button>
-        </div>
-      </div>
-
-      {/* Job metadata */}
-      <div className="flex flex-wrap gap-2 mb-6">
-        <Badge className={getExperienceLevelColor(job.experience_level)}>
-          {job.experience_level}
-        </Badge>
-        <Badge className={getJobTypeColor(job.job_type)}>
-          {job.job_type}
-        </Badge>
-        <Badge variant="outline" className="flex items-center space-x-1">
-          <Briefcase className="h-3 w-3" />
-          <span>{job.department || 'General'}</span>
-        </Badge>
-        <Badge variant="outline" className="flex items-center space-x-1">
-          <MapPin className="h-3 w-3" />
-          <span>{job.location || 'Remote'}</span>
-        </Badge>
-        <Badge variant="outline" className="flex items-center space-x-1">
-          <Clock className="h-3 w-3" />
-          <span>Posted {formatDate(job.created_at)}</span>
-        </Badge>
-      </div>
+    </div>
+  </div>
+    
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Main job details */}
@@ -273,5 +233,6 @@ export function JobDetailClient({ job }: JobDetailClientProps) {
         </div>
       </div>
     </div>
+    </LayoutWrapper>
   )
 }

@@ -27,7 +27,7 @@ export async function GET(
         applied_at,
         rejected_at,
         rejection_reason,
-        candidate: candidates (
+        candidate: candidate_id (
           id,
           name,
           email,

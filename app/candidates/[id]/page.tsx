@@ -106,9 +106,9 @@ export default async function CandidateDetailPage({
               </CardHeader>
               <CardContent>
                 <div className="prose max-w-none">
-                  <pre className="whitespace-pre-wrap text-sm text-gray-700 font-mono bg-gray-50 p-4 rounded-lg">
-                    {candidate.cv_text}
-                  </pre>
+                  
+                  {candidate.cv_text}
+               
                 </div>
               </CardContent>
             </Card>

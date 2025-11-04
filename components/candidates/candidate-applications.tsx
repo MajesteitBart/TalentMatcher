@@ -6,9 +6,8 @@ import { RejectCandidateButton } from '@/components/candidates/reject-candidate-
 import { ApplicationStatusDropdown } from '@/components/applications/application-status-dropdown'
 import { ApplicationStatusTimeline } from '@/components/applications/application-status-timeline'
 import { useRouter } from 'next/navigation'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { ExternalLink, Calendar, Building2 } from 'lucide-react'
+import { ExternalLink, Calendar, Building2, ChevronRight } from 'lucide-react'
 import { toast } from 'sonner'
 import type { Database, CandidateWithApplications } from '@/lib/types/database'
 
@@ -91,71 +90,58 @@ export function CandidateApplications({ applications, candidate }: CandidateAppl
   }
 
   return (
-    <div className="space-y-4" key={refreshKey}>
+    <div className="space-y-3" key={refreshKey}>
       {applications.map((application) => (
-        <Card key={application.id} className="overflow-hidden">
-          <CardHeader className="pb-3">
-            <div className="flex items-start justify-between">
-              <div className="flex-1">
-                <CardTitle className="text-lg mb-2">{application.job.title}</CardTitle>
-                <div className="flex items-center space-x-2 text-sm text-gray-600">
+        <div
+          key={application.id}
+          className=""
+        >
+          <div className="flex items-start justify-between mb-3">
+            <div className="flex-1">
+              <div className="flex items-center gap-2 mb-2">
+                <h3 className="text-lg font-semibold">{application.job.title}</h3>
+                
+                
+              </div>
+              <div className="flex items-center space-x-3 text-sm text-gray-600">
+                <div className="flex items-center space-x-1">
                   <Building2 className="h-3 w-3" />
                   <span>{application.job.department || 'No department'}</span>
-                  {application.job.location && (
-                    <>
-                      <span>•</span>
-                      <span>{application.job.location}</span>
-                    </>
-                  )}
+                </div>
+                {application.job.location && (
+                  <span>• {application.job.location}</span>
+                )}
+                <div className="flex items-center space-x-1">
+                  <Calendar className="h-3 w-3" />
+                  <span>Applied {formatDate(application.applied_at)}</span>
                 </div>
               </div>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => router.push(`/jobs/${application.job_id}`)}
-                className="flex items-center space-x-1"
-              >
-                <ExternalLink className="h-3 w-3" />
-                <span>View Job</span>
-              </Button>
             </div>
-          </CardHeader>
-
-          <CardContent className="space-y-4">
-            {/* Application Details */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2 text-sm text-gray-600">
-                <Calendar className="h-3 w-3" />
-                <span>Applied {formatDate(application.applied_at)}</span>
-              </div>
-
-              {/* Status Management */}
-              <div className="flex items-center space-x-2">
-                <ApplicationStatusDropdown
-                  applicationId={application.id}
-                  currentStatus={application.status}
-                  onStatusChange={(newStatus, reason) => handleStatusChange(application.id, newStatus, reason)}
-                  disabled={isLoading}
-                />
-              </div>
-            </div>
-
-            {/* Rejection Reason */}
-            {application.status === 'rejected' && application.rejection_reason && (
-              <div className="p-3 bg-red-50 border border-red-200 rounded-md">
-                <p className="text-sm font-medium text-red-800 mb-1">Rejection Reason:</p>
-                <p className="text-sm text-red-700">{application.rejection_reason}</p>
-              </div>
-            )}
-
-            {/* Status History Timeline */}
-            <ApplicationStatusTimeline
+ </div>
+            {/* Status Management */}
+            <ApplicationStatusDropdown
               applicationId={application.id}
-              compact={true}
-              maxItems={3}
+              currentStatus={application.status}
+              onStatusChange={(newStatus, reason) => handleStatusChange(application.id, newStatus, reason)}
+              disabled={isLoading || application.status === 'rejected'}
             />
-          </CardContent>
-        </Card>
+         
+
+          {/* Rejection Reason */}
+          {application.status === 'rejected' && application.rejection_reason && (
+            <div className="my-3 p-3 bg-red-50 border border-red-200 rounded-md">
+              <p className="text-sm font-medium text-red-800 mb-1">Rejection Reason:</p>
+              <p className="text-sm text-red-700">{application.rejection_reason}</p>
+            </div>
+          )}
+
+          {/* Status History Timeline */}
+          <ApplicationStatusTimeline
+            applicationId={application.id}
+            compact={true}
+            maxItems={3}
+          />
+        </div>
       ))}
     </div>
   )
