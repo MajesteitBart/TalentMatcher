@@ -94,14 +94,15 @@ export function WorkflowDetail({ workflow }: WorkflowDetailProps) {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-4">
-          <Button size="sm" asChild>
+       <Button size="sm" asChild>
             <Link href="/workflows">
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Workflows
             </Link>
           </Button>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-4">
+         
           <div className="flex items-center space-x-2">
             {getStatusIcon(workflow.status)}
             <h1 className="text-3xl font-bold text-gray-900">Workflow Details</h1>

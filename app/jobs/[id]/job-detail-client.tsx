@@ -107,9 +107,7 @@ export function JobDetailClient({ job }: JobDetailClientProps) {
   return (
     <div className="container mx-auto px-4 py-8 max-w-6xl">
       {/* Header with actions */}
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center space-x-4">
-          <Button
+      <Button
             variant="outline"
             onClick={() => router.back()}
             className="flex items-center space-x-2"
@@ -117,6 +115,9 @@ export function JobDetailClient({ job }: JobDetailClientProps) {
             <ArrowLeft className="h-4 w-4" />
             <span>Back</span>
           </Button>
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center space-x-4">
+          
           <div>
             <h1 className="text-3xl font-bold text-gray-900">{job.title}</h1>
             <p className="text-lg text-gray-600">{job.company?.name}</p>
