@@ -14,7 +14,7 @@ export default async function WorkflowDetailPage({
   params,
 }: WorkflowDetailPageProps) {
   const { id } = await params
-
+  console.log('Loading workflow detail page for ID:', id)
   // Fetch workflow data from API
   const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/workflow/status/${id}`, {
     cache: 'no-store',

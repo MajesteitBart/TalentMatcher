@@ -290,64 +290,29 @@ export function WorkflowDetail({ workflow }: WorkflowDetailProps) {
 
       {/* Parsed CV Data */}
       {workflow.parsed_cv && (
-        <Card>
-          <CardHeader>
-            <CardTitle
-              className="flex items-center justify-between cursor-pointer"
-              onClick={() => toggleSection('parsedCV')}
-            >
-              <span>Parsed CV Data</span>
-              {expandedSections.parsedCV ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-            </CardTitle>
-          </CardHeader>
-          {expandedSections.parsedCV && (
-            <CardContent>
+       
+         
+           
               <WorkflowStateDisplay
                 title="Parsed CV"
                 data={workflow.parsed_cv}
                 defaultExpanded={false}
               />
-            </CardContent>
-          )}
-        </Card>
+          
+    
       )}
 
       {/* Workflow State */}
       {workflow.state && (
-        <Card>
-          <CardHeader>
-            <CardTitle
-              className="flex items-center justify-between cursor-pointer"
-              onClick={() => toggleSection('state')}
-            >
-              <span>Workflow State Data</span>
-              <div className="flex items-center space-x-2">
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    setShowRawState(!showRawState)
-                  }}
-                >
-                  {showRawState ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </Button>
-                {expandedSections.state ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-              </div>
-            </CardTitle>
-          </CardHeader>
-          {expandedSections.state && (
-            <CardContent>
+       
               <WorkflowStateDisplay
                 title="Complete State"
                 data={workflow.state}
                 defaultExpanded={false}
                 showRaw={showRawState}
               />
-            </CardContent>
           )}
-        </Card>
-      )}
+      
     </div>
   )
 }

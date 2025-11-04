@@ -40,6 +40,8 @@ export async function updateWorkflowExecution(
 export async function getWorkflowExecution(id: string) {
   const supabase = createAdminClient()
 
+  console.log('Getting workflow execution with ID:', id)
+  
   const { data, error } = await (supabase
     .from('workflow_executions')
     .select(`

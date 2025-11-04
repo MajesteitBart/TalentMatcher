@@ -13,7 +13,7 @@ export async function GET(
 
     const execution = await getWorkflowExecution(id)
 
-    console.log('Fetched workflow execution:', execution)
+    console.log('Fetched workflow execution:', id)
 
     if (!execution) {
       return NextResponse.json({

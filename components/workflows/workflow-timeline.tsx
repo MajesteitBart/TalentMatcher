@@ -72,48 +72,48 @@ export function WorkflowTimeline({ workflow }: WorkflowTimelineProps) {
       timestamp: workflow.started_at,
       description: 'Workflow processing began'
     },
-    {
-      key: 'parse_cv',
-      label: 'CV Parsing',
-      status: getStepStatus(workflow.timeline?.parse_cv, hasErrorInStep('parse_cv')),
-      timestamp: workflow.timeline?.parse_cv,
-      description: 'Extracting structured data from candidate CV using AI'
-    },
-    {
-      key: 'retrieve_skills',
-      label: 'Skills Search',
-      status: getStepStatus(workflow.timeline?.retrieve_skills, hasErrorInStep('retrieve_skills')),
-      timestamp: workflow.timeline?.retrieve_skills,
-      description: 'Searching for jobs matching candidate skills (40% weight)'
-    },
-    {
-      key: 'retrieve_experience',
-      label: 'Experience Search',
-      status: getStepStatus(workflow.timeline?.retrieve_experience, hasErrorInStep('retrieve_experience')),
-      timestamp: workflow.timeline?.retrieve_experience,
-      description: 'Searching for jobs matching candidate experience (35% weight)'
-    },
-    {
-      key: 'retrieve_profile',
-      label: 'Profile Search',
-      status: getStepStatus(workflow.timeline?.retrieve_profile, hasErrorInStep('retrieve_profile')),
-      timestamp: workflow.timeline?.retrieve_profile,
-      description: 'Searching for jobs matching overall candidate profile (25% weight)'
-    },
-    {
-      key: 'consolidate',
-      label: 'Result Consolidation',
-      status: getStepStatus(workflow.timeline?.consolidate, hasErrorInStep('consolidate')),
-      timestamp: workflow.timeline?.consolidate,
-      description: 'Merging and ranking search results from all sources'
-    },
-    {
-      key: 'analyze',
-      label: 'AI Analysis',
-      status: getStepStatus(workflow.timeline?.analyze, hasErrorInStep('analyze')),
-      timestamp: workflow.timeline?.analyze,
-      description: 'Generating detailed analysis and recommendations'
-    },
+    // {
+    //   key: 'parse_cv',
+    //   label: 'CV Parsing',
+    //   status: getStepStatus(workflow.timeline?.parse_cv, hasErrorInStep('parse_cv')),
+    //   timestamp: workflow.timeline?.parse_cv,
+    //   description: 'Extracting structured data from candidate CV using AI'
+    // },
+    // {
+    //   key: 'retrieve_skills',
+    //   label: 'Skills Search',
+    //   status: getStepStatus(workflow.timeline?.retrieve_skills, hasErrorInStep('retrieve_skills')),
+    //   timestamp: workflow.timeline?.retrieve_skills,
+    //   description: 'Searching for jobs matching candidate skills (40% weight)'
+    // },
+    // {
+    //   key: 'retrieve_experience',
+    //   label: 'Experience Search',
+    //   status: getStepStatus(workflow.timeline?.retrieve_experience, hasErrorInStep('retrieve_experience')),
+    //   timestamp: workflow.timeline?.retrieve_experience,
+    //   description: 'Searching for jobs matching candidate experience (35% weight)'
+    // },
+    // {
+    //   key: 'retrieve_profile',
+    //   label: 'Profile Search',
+    //   status: getStepStatus(workflow.timeline?.retrieve_profile, hasErrorInStep('retrieve_profile')),
+    //   timestamp: workflow.timeline?.retrieve_profile,
+    //   description: 'Searching for jobs matching overall candidate profile (25% weight)'
+    // },
+    // {
+    //   key: 'consolidate',
+    //   label: 'Result Consolidation',
+    //   status: getStepStatus(workflow.timeline?.consolidate, hasErrorInStep('consolidate')),
+    //   timestamp: workflow.timeline?.consolidate,
+    //   description: 'Merging and ranking search results from all sources'
+    // },
+    // {
+    //   key: 'analyze',
+    //   label: 'AI Analysis',
+    //   status: getStepStatus(workflow.timeline?.analyze, hasErrorInStep('analyze')),
+    //   timestamp: workflow.timeline?.analyze,
+    //   description: 'Generating detailed analysis and recommendations'
+    // },
     {
       key: 'completed_at',
       label: 'Completed',
@@ -147,22 +147,22 @@ export function WorkflowTimeline({ workflow }: WorkflowTimelineProps) {
     switch (stepKey) {
       case 'created_at':
         start = timeline.created_at
-        end = timeline.started_at
+        end = timeline.created_at
         break
       case 'parse_cv':
-        start = timeline.started_at
+        start = timeline.created_at
         end = timeline.parse_cv
         break
       case 'retrieve_skills':
-        start = timeline.parse_cv
+        start = timeline.created_at
         end = timeline.retrieve_skills
         break
       case 'retrieve_experience':
-        start = timeline.parse_cv
+        start = timeline.created_at
         end = timeline.retrieve_experience
         break
       case 'retrieve_profile':
-        start = timeline.parse_cv
+        start = timeline.created_at
         end = timeline.retrieve_profile
         break
       case 'consolidate':
@@ -178,7 +178,7 @@ export function WorkflowTimeline({ workflow }: WorkflowTimelineProps) {
         end = timeline.analyze
         break
       case 'completed_at':
-        start = timeline.analyze
+        start = timeline.created_at
         end = timeline.completed_at
         break
     }
@@ -186,7 +186,8 @@ export function WorkflowTimeline({ workflow }: WorkflowTimelineProps) {
     if (start && end) {
       try {
         const duration = Math.floor((new Date(end).getTime() - new Date(start).getTime()) / 1000)
-        if (duration < 60) return `${duration}s`
+        if(duration == 0) return ''
+        if (duration < 60 ) return `${duration}s`
         const minutes = Math.floor(duration / 60)
         const seconds = duration % 60
         return `${minutes}m ${seconds}s`
