@@ -86,61 +86,84 @@ export function CandidateApplications({ applications, candidate }: CandidateAppl
   }
 
   if (applications.length === 0) {
-    return <p className="text-gray-500">No applications yet</p>
+    return (
+      <div className="text-center py-8">
+        <p className="text-muted-foreground italic">No applications yet</p>
+      </div>
+    )
   }
 
   return (
-    <div className="space-y-3" key={refreshKey}>
+    <div className="space-y-4" key={refreshKey}>
       {applications.map((application) => (
         <div
           key={application.id}
-          className=""
+          className="p-4 rounded-lg border border-border hover:border-primary/30 transition-all duration-200 hover:shadow-sm bg-gradient-to-r from-background to-muted/10"
         >
-          <div className="flex items-start justify-between mb-3">
+          <div className="flex items-start justify-between mb-4">
             <div className="flex-1">
-              <div className="flex items-center gap-2 mb-2">
-                <h3 className="text-lg font-semibold">{application.job.title}</h3>
-                
-                
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-8 h-8 bg-primary/10 rounded-md flex items-center justify-center">
+                  <Building2 className="w-4 h-4 text-primary" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-foreground">{application.job.title}</h3>
+                  <Badge className={`status-badge status-${application.status} mt-1`}>
+                    {application.status.replace('_', ' ')}
+                  </Badge>
+                </div>
               </div>
-              <div className="flex items-center space-x-3 text-sm text-gray-600">
-                <div className="flex items-center space-x-1">
-                  <Building2 className="h-3 w-3" />
+              <div className="flex items-center space-x-4 text-sm text-muted-foreground">
+                <div className="flex items-center space-x-2">
+                  <Building2 className="h-4 w-4" />
                   <span>{application.job.department || 'No department'}</span>
                 </div>
                 {application.job.location && (
-                  <span>• {application.job.location}</span>
+                  <span className="flex items-center space-x-1">
+                    <span>•</span>
+                    <span>{application.job.location}</span>
+                  </span>
                 )}
-                <div className="flex items-center space-x-1">
-                  <Calendar className="h-3 w-3" />
+                <div className="flex items-center space-x-2">
+                  <Calendar className="h-4 w-4" />
                   <span>Applied {formatDate(application.applied_at)}</span>
                 </div>
               </div>
             </div>
- </div>
-            {/* Status Management */}
+          </div>
+
+          <div className="mt-4 flex items-center justify-between">
             <ApplicationStatusDropdown
               applicationId={application.id}
               currentStatus={application.status}
               onStatusChange={(newStatus, reason) => handleStatusChange(application.id, newStatus, reason)}
               disabled={isLoading || application.status === 'rejected'}
             />
-         
+
+            <Button size="sm" variant="outline" asChild className="hover:scale-105 transition-transform">
+              <a href={`/jobs/${application.job.id}`} target="_blank" rel="noopener noreferrer">
+                <ExternalLink className="w-4 h-4 mr-2" />
+                View Job
+              </a>
+            </Button>
+          </div>
 
           {/* Rejection Reason */}
           {application.status === 'rejected' && application.rejection_reason && (
-            <div className="my-3 p-3 bg-red-50 border border-red-200 rounded-md">
-              <p className="text-sm font-medium text-red-800 mb-1">Rejection Reason:</p>
-              <p className="text-sm text-red-700">{application.rejection_reason}</p>
+            <div className="mt-4 p-4 bg-destructive/5 border border-destructive/20 rounded-lg">
+              <p className="text-sm font-medium text-destructive mb-1">Rejection Reason:</p>
+              <p className="text-sm text-muted-foreground">{application.rejection_reason}</p>
             </div>
           )}
 
           {/* Status History Timeline */}
-          <ApplicationStatusTimeline
-            applicationId={application.id}
-            compact={true}
-            maxItems={3}
-          />
+          <div className="mt-4">
+            <ApplicationStatusTimeline
+              applicationId={application.id}
+              compact={true}
+              maxItems={3}
+            />
+          </div>
         </div>
       ))}
     </div>

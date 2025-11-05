@@ -7,9 +7,13 @@ const nextConfig = {
   },
   // Fix caching issues when running with workers
   reactStrictMode: true,
-  swcMinify: true,
   compiler: {
     removeConsole: false,
+  },
+  // Turbopack configuration for Next.js 16
+  turbopack: {
+    // Set the workspace root to avoid warnings about multiple lockfiles
+    root: __dirname,
   },
   webpack: (config, { isServer, dev }) => {
     // Fix for canvas and other node modules

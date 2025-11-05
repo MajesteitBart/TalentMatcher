@@ -374,7 +374,7 @@ export function SettingsClient({ initialCompanies, initialCompany }: SettingsCli
                         <Input placeholder="https://example.com" {...field} />
                       </FormControl>
                       <FormDescription>
-                        Your company's official website URL (optional).
+                        {`Your company's official website URL (optional).`}
                       </FormDescription>
                       <FormMessage />
                     </FormItem>
@@ -438,7 +438,7 @@ export function SettingsClient({ initialCompanies, initialCompany }: SettingsCli
                           <Input placeholder="https://example.com" {...field} />
                         </FormControl>
                         <FormDescription>
-                          Your company's official website URL (optional).
+                          {`Your company's official website URL (optional).`}
                         </FormDescription>
                         <FormMessage />
                       </FormItem>

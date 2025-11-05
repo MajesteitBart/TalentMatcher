@@ -13,6 +13,16 @@ import { ArrowLeft, Save, Upload } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 
+interface FormErrors {
+  company_id?: string
+  name?: string
+  email?: string
+  cv_text?: string
+  cv_file_url?: string
+  phone?: string
+  linkedin_url?: string
+}
+
 interface CandidateFormData {
   company_id: string
   name: string
@@ -33,6 +43,7 @@ export function CandidateForm({ candidate, companies }: CandidateFormProps) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
+  const [fieldErrors, setFieldErrors] = useState<FormErrors>({})
 
   const [formData, setFormData] = useState<CandidateFormData>({
     company_id: candidate?.company_id || companies[0]?.id || '',
@@ -44,10 +55,76 @@ export function CandidateForm({ candidate, companies }: CandidateFormProps) {
     linkedin_url: candidate?.linkedin_url || ''
   })
 
+  const validateField = (field: keyof CandidateFormData, value: string): string | undefined => {
+    switch (field) {
+      case 'company_id':
+        if (!value) return 'Please select a company'
+        break
+      case 'name':
+        if (!value.trim()) return 'Name is required'
+        if (value.trim().length < 2) return 'Name must be at least 2 characters'
+        if (value.trim().length > 100) return 'Name must be less than 100 characters'
+        break
+      case 'email':
+        if (!value.trim()) return 'Email is required'
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+        if (!emailRegex.test(value)) return 'Please enter a valid email address'
+        break
+      case 'cv_text':
+        if (!value.trim()) return 'CV text is required'
+        if (value.trim().length < 50) return 'CV text must be at least 50 characters'
+        break
+      case 'phone':
+        if (value && !/^[+]?[\d\s\-\(\)]+$/.test(value)) {
+          return 'Please enter a valid phone number'
+        }
+        break
+      case 'linkedin_url':
+        if (value && !value.startsWith('https://linkedin.com/')) {
+          return 'LinkedIn URL must start with https://linkedin.com/'
+        }
+        break
+      case 'cv_file_url':
+        if (value) {
+          try {
+            new URL(value)
+          } catch {
+            return 'Please enter a valid URL'
+          }
+        }
+        break
+    }
+  }
+
   const handleInputChange = (field: keyof CandidateFormData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }))
     setError(null)
     setSuccess(null)
+
+    // Validate field on change
+    const fieldError = validateField(field, value)
+    setFieldErrors(prev => ({
+      ...prev,
+      [field]: fieldError
+    }))
+  }
+
+  const validateForm = (): boolean => {
+    const errors: FormErrors = {}
+    let isValid = true
+
+    // Validate all required fields
+    Object.keys(formData).forEach((field) => {
+      const fieldKey = field as keyof CandidateFormData
+      const error = validateField(fieldKey, formData[fieldKey])
+      if (error) {
+        errors[fieldKey] = error
+        isValid = false
+      }
+    })
+
+    setFieldErrors(errors)
+    return isValid
   }
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -69,6 +146,12 @@ export function CandidateForm({ candidate, companies }: CandidateFormProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+
+    // Validate form before submission
+    if (!validateForm()) {
+      return
+    }
+
     setLoading(true)
     setError(null)
     setSuccess(null)
@@ -165,13 +248,16 @@ export function CandidateForm({ candidate, companies }: CandidateFormProps) {
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Company Selection */}
               <div>
-                <Label htmlFor="company_id">Company *</Label>
+                <Label htmlFor="company_id" className={fieldErrors.company_id ? 'text-destructive' : ''}>
+                  Company *
+                </Label>
                 <Select
                   id="company_id"
                   value={formData.company_id}
                   onChange={(e) => handleInputChange('company_id', e.target.value)}
                   required
                   disabled={!!candidate}
+                  className={fieldErrors.company_id ? 'border-destructive focus:ring-destructive' : ''}
                 >
                   {companies.map((company) => (
                     <option key={company.id} value={company.id}>
@@ -179,8 +265,11 @@ export function CandidateForm({ candidate, companies }: CandidateFormProps) {
                     </option>
                   ))}
                 </Select>
+                {fieldErrors.company_id && (
+                  <p className="text-sm text-destructive mt-1">{fieldErrors.company_id}</p>
+                )}
                 {candidate && (
-                  <p className="text-sm text-gray-500 mt-1">
+                  <p className="text-sm text-muted-foreground mt-1">
                     Company cannot be changed after candidate creation
                   </p>
                 )}
@@ -189,19 +278,27 @@ export function CandidateForm({ candidate, companies }: CandidateFormProps) {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Name */}
                 <div>
-                  <Label htmlFor="name">Full Name *</Label>
+                  <Label htmlFor="name" className={fieldErrors.name ? 'text-destructive' : ''}>
+                    Full Name *
+                  </Label>
                   <Input
                     id="name"
                     value={formData.name}
                     onChange={(e) => handleInputChange('name', e.target.value)}
                     placeholder="e.g. John Doe"
                     required
+                    className={fieldErrors.name ? 'border-destructive focus:ring-destructive' : ''}
                   />
+                  {fieldErrors.name && (
+                    <p className="text-sm text-destructive mt-1">{fieldErrors.name}</p>
+                  )}
                 </div>
 
                 {/* Email */}
                 <div>
-                  <Label htmlFor="email">Email Address *</Label>
+                  <Label htmlFor="email" className={fieldErrors.email ? 'text-destructive' : ''}>
+                    Email Address *
+                  </Label>
                   <Input
                     id="email"
                     type="email"
@@ -209,39 +306,57 @@ export function CandidateForm({ candidate, companies }: CandidateFormProps) {
                     onChange={(e) => handleInputChange('email', e.target.value)}
                     placeholder="e.g. john@example.com"
                     required
+                    className={fieldErrors.email ? 'border-destructive focus:ring-destructive' : ''}
                   />
+                  {fieldErrors.email && (
+                    <p className="text-sm text-destructive mt-1">{fieldErrors.email}</p>
+                  )}
                 </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Phone */}
                 <div>
-                  <Label htmlFor="phone">Phone Number</Label>
+                  <Label htmlFor="phone" className={fieldErrors.phone ? 'text-destructive' : ''}>
+                    Phone Number
+                  </Label>
                   <Input
                     id="phone"
                     type="tel"
                     value={formData.phone}
                     onChange={(e) => handleInputChange('phone', e.target.value)}
                     placeholder="e.g. +1 (555) 123-4567"
+                    className={fieldErrors.phone ? 'border-destructive focus:ring-destructive' : ''}
                   />
+                  {fieldErrors.phone && (
+                    <p className="text-sm text-destructive mt-1">{fieldErrors.phone}</p>
+                  )}
                 </div>
 
                 {/* LinkedIn URL */}
                 <div>
-                  <Label htmlFor="linkedin_url">LinkedIn Profile</Label>
+                  <Label htmlFor="linkedin_url" className={fieldErrors.linkedin_url ? 'text-destructive' : ''}>
+                    LinkedIn Profile
+                  </Label>
                   <Input
                     id="linkedin_url"
                     type="url"
                     value={formData.linkedin_url}
                     onChange={(e) => handleInputChange('linkedin_url', e.target.value)}
                     placeholder="e.g. https://linkedin.com/in/johndoe"
+                    className={fieldErrors.linkedin_url ? 'border-destructive focus:ring-destructive' : ''}
                   />
+                  {fieldErrors.linkedin_url && (
+                    <p className="text-sm text-destructive mt-1">{fieldErrors.linkedin_url}</p>
+                  )}
                 </div>
               </div>
 
               {/* CV Text */}
               <div>
-                <Label htmlFor="cv_text">CV Text *</Label>
+                <Label htmlFor="cv_text" className={fieldErrors.cv_text ? 'text-destructive' : ''}>
+                  CV Text *
+                </Label>
                 <Textarea
                   id="cv_text"
                   value={formData.cv_text}
@@ -249,8 +364,12 @@ export function CandidateForm({ candidate, companies }: CandidateFormProps) {
                   placeholder="Paste the candidate's CV text here or upload a file below..."
                   rows={8}
                   required
+                  className={fieldErrors.cv_text ? 'border-destructive focus:ring-destructive' : ''}
                 />
-                <p className="text-sm text-gray-500 mt-1">
+                {fieldErrors.cv_text && (
+                  <p className="text-sm text-destructive mt-1">{fieldErrors.cv_text}</p>
+                )}
+                <p className="text-sm text-muted-foreground mt-1">
                   You can either paste the CV text directly or upload a text file below.
                 </p>
               </div>
@@ -274,15 +393,21 @@ export function CandidateForm({ candidate, companies }: CandidateFormProps) {
 
               {/* CV File URL */}
               <div>
-                <Label htmlFor="cv_file_url">CV File URL (Optional)</Label>
+                <Label htmlFor="cv_file_url" className={fieldErrors.cv_file_url ? 'text-destructive' : ''}>
+                  CV File URL (Optional)
+                </Label>
                 <Input
                   id="cv_file_url"
                   type="url"
                   value={formData.cv_file_url}
                   onChange={(e) => handleInputChange('cv_file_url', e.target.value)}
                   placeholder="e.g. https://example.com/cv.pdf"
+                  className={fieldErrors.cv_file_url ? 'border-destructive focus:ring-destructive' : ''}
                 />
-                <p className="text-sm text-gray-500 mt-1">
+                {fieldErrors.cv_file_url && (
+                  <p className="text-sm text-destructive mt-1">{fieldErrors.cv_file_url}</p>
+                )}
+                <p className="text-sm text-muted-foreground mt-1">
                   URL to the candidate&apos;s CV file if hosted elsewhere.
                 </p>
               </div>

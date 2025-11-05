@@ -40,12 +40,13 @@ export default async function DashboardPage() {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <Card className="metric-card">
+            <CardHeader className="flex flex-row items-left justify-between space-y-0 pb-2">
+              
               <CardTitle className="text-sm font-medium">Total Candidates</CardTitle>
-              <Users className="h-4 w-4 text-muted-foreground" />
+              
             </CardHeader>
-            <CardContent>
+            <CardContent className='flex-1'>
               <div className="text-2xl font-bold">{stats.totalCandidates}</div>
               <p className="text-xs text-muted-foreground">
                 {stats.rejectedCandidates} rejected
@@ -53,10 +54,10 @@ export default async function DashboardPage() {
             </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <Card className="metric-card">
+            <CardHeader className="flex flex-row items-left justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Active Jobs</CardTitle>
-              <Briefcase className="h-4 w-4 text-muted-foreground" />
+              
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{stats.activeJobs}</div>
@@ -66,10 +67,10 @@ export default async function DashboardPage() {
             </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <Card className="metric-card">
+            <CardHeader className="flex flex-row items-left justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Active Workflows</CardTitle>
-              <Activity className="h-4 w-4 text-muted-foreground" />
+              
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{stats.activeWorkflows}</div>
@@ -79,10 +80,10 @@ export default async function DashboardPage() {
             </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <Card className="metric-card">
+            <CardHeader className="flex flex-row items-left justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Success Rate</CardTitle>
-              <Activity className="h-4 w-4 text-muted-foreground" />
+              
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
@@ -125,16 +126,8 @@ export default async function DashboardPage() {
                         </div>
                         <div className="text-right">
                           {latestApplication && (
-                            <span
-                              className={`px-2 py-1 rounded-full text-xs font-medium ${
-                                latestApplication.status === 'rejected'
-                                  ? 'bg-red-100 text-red-800'
-                                  : latestApplication.status === 'accepted'
-                                  ? 'bg-green-100 text-green-800'
-                                  : 'bg-gray-100 text-gray-800'
-                              }`}
-                            >
-                              {latestApplication.status}
+                            <span className={`status-badge status-${latestApplication.status}`}>
+                              {latestApplication.status.replace('_', ' ')}
                             </span>
                           )}
                         </div>
@@ -172,15 +165,7 @@ export default async function DashboardPage() {
                         </p>
                       </div>
                       <div className="text-right">
-                        <span
-                          className={`px-2 py-1 rounded-full text-xs font-medium ${
-                            workflow.status === 'completed'
-                              ? 'bg-green-100 text-green-800'
-                              : workflow.status === 'failed'
-                              ? 'bg-red-100 text-red-800'
-                              : 'bg-blue-100 text-blue-800'
-                          }`}
-                        >
+                        <span className={`status-badge status-${workflow.status}`}>
                           {workflow.status}
                         </span>
                       </div>
@@ -193,33 +178,28 @@ export default async function DashboardPage() {
         </div>
 
         {/* Quick Actions */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Quick Actions</CardTitle>
-          </CardHeader>
-          <CardContent>
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <Button asChild className="h-auto p-4 flex-col">
+              <Button asChild variant={'outline'} className="h-auto p-4 flex-col btn-lift">
                 <Link href="/candidates">
-                  <Users className="w-6 h-6 mb-2" />
+                  <Users className="w-10 h-10 mb-2" />
                   Manage Candidates
                 </Link>
               </Button>
-              <Button asChild variant="outline" className="h-auto p-4 flex-col">
+              <Button asChild variant="outline" className="h-auto p-4 flex-col btn-lift">
                 <Link href="/jobs">
-                  <Briefcase className="w-6 h-6 mb-2" />
+                  <Briefcase className="w-10 h-10 mb-2" />
                   Manage Jobs
                 </Link>
               </Button>
-              <Button asChild variant="outline" className="h-auto p-4 flex-col">
+              <Button asChild variant="outline" className="h-auto p-4 flex-col btn-lift">
                 <Link href="/workflows">
-                  <Activity className="w-6 h-6 mb-2" />
+                  <Activity className="w-10 h-10 mb-2" />
                   Monitor Workflows
                 </Link>
               </Button>
             </div>
-          </CardContent>
-        </Card>
+          
       </div>
     </LayoutWrapper>
   )

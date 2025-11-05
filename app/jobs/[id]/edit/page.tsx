@@ -7,13 +7,14 @@ export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
 interface PageProps {
-  params: {
+  params: Promise<{
     id: string
-  }
+  }>
 }
 
 export default async function EditJobPage({ params }: PageProps) {
-  const job = await getJob(params.id)
+  const { id } = await params
+  const job = await getJob(id)
   const companies = await getCompanies()
 
   if (!job) {

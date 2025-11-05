@@ -5,9 +5,10 @@ import type { APIResponse } from '@/lib/types'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ): Promise<NextResponse<APIResponse>> {
   try {
+    const { id: jobId } = await params
     const supabase = createAdminClient()
     const { searchParams } = new URL(request.url)
 
@@ -44,7 +45,7 @@ export async function GET(
           )
         )
       `)
-      .eq('job_id', params.id)
+      .eq('job_id', jobId)
 
     // Apply status filter if provided
     if (status) {
@@ -66,11 +67,11 @@ export async function GET(
     const { count: totalCount, error: countError } = await supabase
       .from('applications')
       .select('id', { count: 'exact', head: true })
-      .eq('job_id', params.id)
-      .eq(status ? 'status' : 'job_id', status || params.id)
+      .eq('job_id', jobId)
+      .eq(status ? 'status' : 'job_id', status || jobId)
 
     if (countError) {
-      logger.error('Error counting applications', { error: countError.message, jobId: params.id })
+      logger.error('Error counting applications', { error: countError.message, jobId: jobId })
       return NextResponse.json({
         success: false,
         error: {
@@ -87,7 +88,7 @@ export async function GET(
     const { data, error } = await query
 
     if (error) {
-      logger.error('Error fetching job candidates', { error: error.message, jobId: params.id })
+      logger.error('Error fetching job candidates', { error: error.message, jobId: jobId })
       return NextResponse.json({
         success: false,
         error: {
@@ -123,7 +124,7 @@ export async function GET(
     })
 
   } catch (error) {
-    logger.error('Job candidates API error', { error, jobId: params.id })
+    logger.error('Job candidates API error', { error, jobId: jobId })
     return NextResponse.json({
       success: false,
       error: {

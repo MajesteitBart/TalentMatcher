@@ -12,10 +12,10 @@ const UpdateApplicationStatusSchema = z.object({
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ): Promise<NextResponse<APIResponse>> {
   try {
-    const applicationId = params.id
+    const { id: applicationId } = await params
     const body = await request.json()
     const { status, rejection_reason } = UpdateApplicationStatusSchema.parse(body)
 
@@ -141,10 +141,10 @@ export async function PATCH(
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ): Promise<NextResponse<APIResponse>> {
   try {
-    const applicationId = params.id
+    const { id: applicationId } = await params;
 
     const adminClient = createAdminClient()
 

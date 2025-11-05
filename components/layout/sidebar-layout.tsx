@@ -63,7 +63,7 @@ export function SidebarLayout({ children }: SidebarLayoutProps) {
             <SidebarMenuItem>
               <SidebarMenuButton size="lg" asChild>
                 <Link href="/">
-                  <div className="flex aspect-square size-8 items-center justify-center overflow-hidden rounded-lg">
+                  <div className="flex aspect-square size-12 items-center justify-center overflow-hidden rounded-lg">
                     <img
                       src="/icon.svg"
                       alt="Talent Matcher Logo"
@@ -71,7 +71,7 @@ export function SidebarLayout({ children }: SidebarLayoutProps) {
                     />
                   </div>
                   <div className="flex flex-col gap-0.5 leading-none">
-                    <span className="font-bold">Talent Matcher</span>
+                    <span className="font-[700] text-lg">TalentMatcher</span>
                     
                   </div>
                 </Link>
@@ -107,11 +107,11 @@ export function SidebarLayout({ children }: SidebarLayoutProps) {
         </SidebarFooter>
       </Sidebar>
       <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center gap-2 border-b bg-background px-4">
+        <header className="flex h-16 shrink-0 items-center gap-2 border-b bg-background px-4 md:hidden">
           <SidebarTrigger className="-ml-1" />
           <div className="flex-1" />
         </header>
-        <main className="flex-1 overflow-auto">
+        <main className="flex-1 overflow-auto md:max-w-screen">
           {children}
         </main>
       </SidebarInset>

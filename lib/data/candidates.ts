@@ -4,7 +4,6 @@ import type { CandidateWithApplications } from '@/lib/types/database'
 export async function getCandidates(): Promise<CandidateWithApplications[]> {
   const supabase = createAdminClient()
 
-  // First try basic candidate query
   const { data: candidatesData, error: candidatesError } = await supabase
     .from('candidates')
     .select(`
@@ -23,7 +22,7 @@ export async function getCandidates(): Promise<CandidateWithApplications[]> {
         applied_at,
         rejected_at,
         rejection_reason,
-        job: job_id (
+        jobs (
           id,
           title,
           department,
@@ -45,11 +44,15 @@ export async function getCandidates(): Promise<CandidateWithApplications[]> {
   }
 
   console.log(`Found ${candidatesData.length} candidates`)
-  console.log('Candidates data:', candidatesData[0])
 
-  // For now, return candidates with empty applications array
-  // TODO: Fix the applications join later
-  return candidatesData
+  // Transform the data to match the expected type
+  return candidatesData.map(candidate => ({
+    ...candidate,
+    applications: candidate.applications.map(app => ({
+      ...app,
+      job: app.jobs
+    }))
+  }))
 }
 
 export async function getCandidate(id: string): Promise<CandidateWithApplications | null> {
@@ -78,7 +81,7 @@ export async function getCandidate(id: string): Promise<CandidateWithApplication
           status,
           created_at,
           alternative_jobs: match_results(
-            job: job_id(
+            jobs (
               id,
               title,
               department,
@@ -89,7 +92,7 @@ export async function getCandidate(id: string): Promise<CandidateWithApplication
             match_reasons
           )
         ),
-        job: job_id (
+        jobs (
           id,
           title,
           department,
@@ -106,5 +109,14 @@ export async function getCandidate(id: string): Promise<CandidateWithApplication
     return null
   }
 
-  return data
+  if (!data) return null
+
+  // Transform the data to match the expected type
+  return {
+    ...data,
+    applications: data.applications.map(app => ({
+      ...app,
+      job: app.jobs
+    }))
+  }
 }

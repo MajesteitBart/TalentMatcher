@@ -123,12 +123,20 @@ export default async function CandidateDetailPage({
                 matches={candidate.applications
                   .flatMap(app => app.workflow_executions || [])
                   .flatMap(exec => exec.alternative_jobs || [])
+                  .filter(job => job && job.jobs && job.jobs.id) // Filter out invalid items
                   .filter((job, index, self) =>
-                    self.findIndex(j => j.job.id === job.job.id) === index
+                    self.findIndex(j => j.jobs.id === job.jobs.id) === index
                   )
                   .map(job => ({
-                    ...job.job,
-                    composite_score: job?.composite_score
+                    id: job.jobs.id,
+                    title: job.jobs.title,
+                    department: job.jobs.department,
+                    location: job.jobs.location,
+                    description: job.jobs.description,
+                    composite_score: job?.composite_score || 0,
+                    skills_score: job?.match_reasons?.skills,
+                    experience_score: job?.match_reasons?.experience,
+                    profile_score: job?.match_reasons?.profile
                   }))}
                 candidateName={candidate.name}
               />
