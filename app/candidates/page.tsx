@@ -24,14 +24,10 @@ export default async function CandidatesPage() {
         <div className="flex justify-between items-center">
           <div>
             <h1 className="text-4xl font-bold text-foreground tracking-tight">Candidates</h1>
-            <p className="text-lg text-muted-foreground mt-2">Manage and track candidate applications</p>
           </div>
           <div className="flex items-center gap-3">
-            <div className="text-sm text-muted-foreground bg-muted/50 px-3 py-1 rounded-full">
-              <Users className="w-4 h-4 inline mr-2" />
-              {candidates.length} candidate{candidates.length !== 1 ? 's' : ''}
-            </div>
-            <Button asChild className="flex items-center space-x-2 shadow-lg hover:shadow-xl transform hover:-translate-y-px transition-all duration-200">
+           
+            <Button variant={'outline'} asChild className="flex items-center space-x-2">
               <Link href="/candidates/add">
                 <Plus className="w-4 h-4" />
                 <span>Add Candidate</span>

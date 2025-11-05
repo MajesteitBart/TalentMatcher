@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { RenderMarkdown } from '@/components/ui/markdown'
 import { WorkflowTimeline } from './workflow-timeline'
 import { MatchResultsTable } from './match-results-table'
 import { WorkflowStateDisplay } from './workflow-state-display'
@@ -95,7 +96,7 @@ export function WorkflowDetail({ workflow }: WorkflowDetailProps) {
     <div className="space-y-8">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <Button size="sm" variant="outline" asChild className="hover:scale-105 transition-transform">
+        <Button size="sm" variant="outline" asChild>
           <Link href="/workflows">
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Workflows
@@ -124,8 +125,7 @@ export function WorkflowDetail({ workflow }: WorkflowDetailProps) {
             size="sm"
             variant="outline"
             onClick={() => copyToClipboard(workflow.id)}
-            className="hover:scale-105 transition-transform"
-          >
+            >
             <Copy className="w-4 h-4 mr-2" />
             Copy ID
           </Button>
@@ -135,7 +135,7 @@ export function WorkflowDetail({ workflow }: WorkflowDetailProps) {
       {/* Main Information Grid */}
       <div className="grid gap-8 lg:grid-cols-3">
         {/* Candidate Information */}
-        <Card className="interactive-card shadow-lg border-0">
+        <Card className="border">
           <CardHeader className="bg-gradient-to-r from-primary/5 to-background border-b">
             <CardTitle className="flex items-center space-x-3">
               <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center">
@@ -148,7 +148,7 @@ export function WorkflowDetail({ workflow }: WorkflowDetailProps) {
             <div className="flex items-center space-x-3 mb-4">
               <div className="w-10 h-10 bg-muted rounded-full flex items-center justify-center">
                 <span className="text-sm font-semibold text-primary">
-                  {workflow.candidate.name.split(' ').map(n => n[0]).join('').toUpperCase()}
+                  {workflow.candidate.name.split(' ').map((n: string) => n[0]).join('').toUpperCase()}
                 </span>
               </div>
               <div>
@@ -171,7 +171,7 @@ export function WorkflowDetail({ workflow }: WorkflowDetailProps) {
                 </a>
               )}
             </div>
-            <Button size="sm" variant="outline" asChild className="w-full mt-4 hover:scale-105 transition-transform">
+            <Button size="sm" variant="outline" asChild className="w-full mt-4">
               <Link href={`/candidates/${workflow.candidate.id}`}>
                 View Candidate Details
               </Link>
@@ -180,7 +180,7 @@ export function WorkflowDetail({ workflow }: WorkflowDetailProps) {
         </Card>
 
         {/* Rejected Job Information */}
-        <Card className="interactive-card shadow-lg border-0">
+        <Card className="border">
           <CardHeader className="bg-gradient-to-r from-destructive/5 to-background border-b">
             <CardTitle className="flex items-center space-x-3">
               <div className="w-8 h-8 bg-destructive/10 rounded-lg flex items-center justify-center">
@@ -204,7 +204,7 @@ export function WorkflowDetail({ workflow }: WorkflowDetailProps) {
                 <Badge variant="outline">{workflow.rejected_job.experience_level}</Badge>
               </div>
             </div>
-            <Button size="sm" variant="outline" asChild className="w-full mt-4 hover:scale-105 transition-transform">
+            <Button size="sm" variant="outline" asChild className="w-full mt-4">
               <Link href={`/jobs/${workflow.rejected_job.id}`}>
                 View Job Details
               </Link>
@@ -213,7 +213,7 @@ export function WorkflowDetail({ workflow }: WorkflowDetailProps) {
         </Card>
 
         {/* Workflow Summary */}
-        <Card className="interactive-card shadow-lg border-0">
+        <Card className="border">
           <CardHeader className="bg-gradient-to-r from-muted/50 to-background border-b">
             <CardTitle className="flex items-center space-x-3">
               <div className="w-8 h-8 bg-muted rounded-lg flex items-center justify-center">
@@ -265,7 +265,7 @@ export function WorkflowDetail({ workflow }: WorkflowDetailProps) {
       </div>
 
       {/* Workflow Timeline */}
-      <Card className="interactive-card shadow-lg border-0">
+      <Card className="border">
         <CardHeader className="bg-gradient-to-r from-muted/50 to-background border-b">
           <CardTitle className="flex items-center space-x-3">
             <Activity className="w-5 h-5 text-primary" />
@@ -279,7 +279,7 @@ export function WorkflowDetail({ workflow }: WorkflowDetailProps) {
 
       {/* Error Display */}
       {workflow.error && (
-        <Card className="interactive-card shadow-lg border-0 border-destructive/20">
+        <Card className="border border-destructive/20">
           <CardHeader className="bg-gradient-to-r from-destructive/5 to-background border-b border-destructive/20">
             <CardTitle className="flex items-center space-x-3 text-destructive">
               <XCircle className="w-5 h-5" />
@@ -296,7 +296,7 @@ export function WorkflowDetail({ workflow }: WorkflowDetailProps) {
 
       {/* Match Results */}
       {workflow.match_results && workflow.match_results.length > 0 && (
-        <Card className="interactive-card shadow-lg border-0">
+        <Card className="border">
           <CardHeader className="bg-gradient-to-r from-green-50 to-emerald-50 border-b border-green-100">
             <CardTitle className="flex items-center space-x-3 text-green-800">
               <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
@@ -313,7 +313,7 @@ export function WorkflowDetail({ workflow }: WorkflowDetailProps) {
 
       {/* Final Analysis */}
       {workflow.final_analysis && (
-        <Card className="interactive-card shadow-lg border-0">
+        <Card className="border">
           <CardHeader className="bg-gradient-to-r from-primary/5 to-background border-b">
             <CardTitle
               className="flex items-center justify-between cursor-pointer hover:text-primary transition-colors"
@@ -330,13 +330,14 @@ export function WorkflowDetail({ workflow }: WorkflowDetailProps) {
           </CardHeader>
           {expandedSections.analysis && (
             <CardContent className="pt-6">
-              <div className="prose prose-lg max-w-none">
+              <RenderMarkdown markdown={workflow.final_analysis} />
+              {/* <div className="prose prose-lg max-w-none">
                 <div className="bg-muted/20 rounded-lg p-6 border border-border/50">
                   <pre className="whitespace-pre-wrap text-sm text-foreground leading-relaxed font-sans">
                     {workflow.final_analysis}
                   </pre>
                 </div>
-              </div>
+              </div> */}
             </CardContent>
           )}
         </Card>
@@ -344,7 +345,7 @@ export function WorkflowDetail({ workflow }: WorkflowDetailProps) {
 
       {/* Parsed CV Data */}
       {workflow.parsed_cv && (
-        <Card className="interactive-card shadow-lg border-0">
+        <Card className="border">
           <CardHeader className="bg-gradient-to-r from-muted/50 to-background border-b">
             <CardTitle className="flex items-center space-x-3">
               <div className="w-8 h-8 bg-muted rounded-lg flex items-center justify-center">
@@ -354,10 +355,7 @@ export function WorkflowDetail({ workflow }: WorkflowDetailProps) {
             </CardTitle>
           </CardHeader>
           <CardContent className="pt-6">
-       
-         
-           
-                        <WorkflowStateDisplay
+            <WorkflowStateDisplay
                 title="Parsed CV"
                 data={workflow.parsed_cv}
                 defaultExpanded={false}
@@ -368,7 +366,7 @@ export function WorkflowDetail({ workflow }: WorkflowDetailProps) {
 
       {/* Workflow State */}
       {workflow.state && (
-        <Card className="interactive-card shadow-lg border-0">
+        <Card className="border">
           <CardHeader className="bg-gradient-to-r from-muted/50 to-background border-b">
             <CardTitle className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
@@ -382,8 +380,7 @@ export function WorkflowDetail({ workflow }: WorkflowDetailProps) {
                   size="sm"
                   variant="outline"
                   onClick={() => setShowRawState(!showRawState)}
-                  className="hover:scale-105 transition-transform"
-                >
+                        >
                   {showRawState ? <EyeOff className="w-4 h-4 mr-2" /> : <Eye className="w-4 h-4 mr-2" />}
                   {showRawState ? 'Hide Raw' : 'Show Raw'}
                 </Button>

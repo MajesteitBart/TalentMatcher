@@ -115,14 +115,14 @@ export default async function CandidateDetailPage({
 
             {/* Alternative Job Matches */}
             {candidate.applications?.some(app =>
-              app.workflow_executions?.some(exec =>
+              (app as any).workflow_executions?.some((exec: any) =>
                 exec.alternative_jobs && exec.alternative_jobs.length > 0
               )
             ) && (
               <AlternativeMatches
                 matches={candidate.applications
-                  .flatMap(app => app.workflow_executions || [])
-                  .flatMap(exec => exec.alternative_jobs || [])
+                  .flatMap((app: any) => (app as any).workflow_executions || [])
+                  .flatMap((exec: any) => exec.alternative_jobs || [])
                   .filter(job => job && job.jobs && job.jobs.id) // Filter out invalid items
                   .filter((job, index, self) =>
                     self.findIndex(j => j.jobs.id === job.jobs.id) === index

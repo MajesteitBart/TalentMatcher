@@ -10,7 +10,8 @@
       "Bash(./tools/start.js:*)",
       "mcp__next-devtools__browser_eval",
       "Bash(bash:*)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(npm run build:*)"
     ],
     "deny": [],
     "ask": []

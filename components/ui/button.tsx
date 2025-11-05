@@ -9,17 +9,17 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-md transform hover:-translate-y-px",
+        default: "bg-primary text-primary-foreground hover:bg-primary/90",
         destructive:
-          "bg-destructive text-destructive-foreground hover:bg-destructive/90 hover:shadow-md transform hover:-translate-y-px",
+          "bg-destructive text-destructive-foreground hover:bg-destructive/90",
         outline:
-          "border border-input bg-background hover:bg-accent hover:text-accent-foreground hover:border-accent-foreground/20 hover:shadow-sm",
+          "border border-input bg-background hover:bg-accent hover:text-accent-foreground hover:border-accent-foreground/20",
         secondary:
-          "bg-secondary text-secondary-foreground hover:bg-secondary/80 hover:shadow-sm",
-        ghost: "hover:bg-accent hover:text-accent-foreground hover:shadow-sm",
+          "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+        ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline decoration-2",
-        success: "bg-green-600 text-white hover:bg-green-700 hover:shadow-md transform hover:-translate-y-px",
-        warning: "bg-yellow-600 text-white hover:bg-yellow-700 hover:shadow-md transform hover:-translate-y-px",
+        success: "bg-green-600 text-white hover:bg-green-700",
+        warning: "bg-yellow-600 text-white hover:bg-yellow-700",
       },
       size: {
         default: "h-10 px-4 py-2",

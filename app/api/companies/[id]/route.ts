@@ -3,15 +3,16 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const supabase = createAdminClient()
 
-    const { data, error } = await supabase
-      .from('companies')
+    const { data, error } = await (supabase
+      .from('companies') as any)
       .select('*')
-      .eq('id', params.id)
+      .eq('id', id)
       .single()
 
     if (error) {
@@ -33,20 +34,21 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const supabase = createAdminClient()
     const body = await request.json()
 
-    const { data, error } = await supabase
-      .from('companies')
+    const { data, error } = await (supabase
+      .from('companies') as any)
       .update({
         name: body.name,
         domain: body.domain || null,
         updated_at: new Date().toISOString()
       })
-      .eq('id', params.id)
+      .eq('id', id)
       .select()
       .single()
 

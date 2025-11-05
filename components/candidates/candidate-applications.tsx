@@ -98,7 +98,7 @@ export function CandidateApplications({ applications, candidate }: CandidateAppl
       {applications.map((application) => (
         <div
           key={application.id}
-          className="p-4 rounded-lg border border-border hover:border-primary/30 transition-all duration-200 hover:shadow-sm bg-gradient-to-r from-background to-muted/10"
+          className="p-4 rounded-lg border border-border bg-gradient-to-r from-background to-muted/10"
         >
           <div className="flex items-start justify-between mb-4">
             <div className="flex-1">
@@ -140,7 +140,7 @@ export function CandidateApplications({ applications, candidate }: CandidateAppl
               disabled={isLoading || application.status === 'rejected'}
             />
 
-            <Button size="sm" variant="outline" asChild className="hover:scale-105 transition-transform">
+            <Button size="sm" variant="outline" asChild>
               <a href={`/jobs/${application.job.id}`} target="_blank" rel="noopener noreferrer">
                 <ExternalLink className="w-4 h-4 mr-2" />
                 View Job

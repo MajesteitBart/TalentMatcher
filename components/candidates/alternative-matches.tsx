@@ -43,7 +43,7 @@ export function AlternativeMatches({ matches, candidateName }: AlternativeMatche
   }
 
   return (
-    <Card className="interactive-card shadow-lg border-0">
+    <Card className="border">
       <CardHeader className="bg-gradient-to-r from-green-50 to-emerald-50 border-b border-green-100">
         <CardTitle className="flex items-center space-x-3">
           <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
@@ -60,14 +60,14 @@ export function AlternativeMatches({ matches, candidateName }: AlternativeMatche
           {matches.map((job, index) => (
             <div
               key={job.id}
-              className={`p-6 rounded-xl border-2 ${index === 0 ? 'border-green-200 bg-gradient-to-r from-green-50/30 to-emerald-50/30' : 'border-border bg-gradient-to-r from-background to-muted/10'} hover:shadow-md transition-all duration-200 hover:-translate-y-px`}
+              className={`p-6 rounded-xl border-2 ${index === 0 ? 'border-green-200 bg-gradient-to-r from-green-50/30 to-emerald-50/30' : 'border-border bg-gradient-to-r from-background to-muted/10'}`}
             >
               <div className="flex items-start justify-between mb-4">
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-2">
                     <h4 className="font-bold text-lg text-foreground">{job.title}</h4>
                     {index === 0 && (
-                      <Badge variant="success" className="text-xs font-medium">
+                      <Badge variant="default" className="text-xs font-medium bg-green-100 text-green-800">
                         Best Match
                       </Badge>
                     )}
@@ -85,7 +85,7 @@ export function AlternativeMatches({ matches, candidateName }: AlternativeMatche
                   <Badge className={`${getScoreColor(job.composite_score)} font-bold text-sm px-3 py-1`}>
                     {formatScore(job.composite_score)}% Match
                   </Badge>
-                  <Button size="sm" variant="outline" asChild className="hover:scale-105 transition-transform">
+                  <Button size="sm" variant="outline" asChild>
                     <Link href={`/jobs/${job.id}`}>
                       <ExternalLink className="w-4 h-4 mr-2" />
                       View Job

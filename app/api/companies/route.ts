@@ -5,8 +5,8 @@ export async function GET() {
   try {
     const supabase = createAdminClient()
 
-    const { data, error } = await supabase
-      .from('companies')
+    const { data, error } = await (supabase
+      .from('companies') as any)
       .select('*')
       .order('name', { ascending: true })
 
@@ -32,8 +32,8 @@ export async function POST(request: NextRequest) {
     const supabase = createAdminClient()
     const body = await request.json()
 
-    const { data, error } = await supabase
-      .from('companies')
+    const { data, error } = await (supabase
+      .from('companies') as any)
       .insert({
         name: body.name,
         domain: body.domain || null,

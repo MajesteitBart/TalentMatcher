@@ -36,8 +36,8 @@ export async function PATCH(
     const adminClient = createAdminClient()
 
     // Get current application status for history tracking
-    const { data: currentApplication, error: fetchError } = await adminClient
-      .from('applications')
+    const { data: currentApplication, error: fetchError } = await (adminClient
+      .from('applications') as any)
       .select('status')
       .eq('id', applicationId)
       .single()
@@ -53,7 +53,7 @@ export async function PATCH(
     }
 
     // Don't update if status is the same
-    if (currentApplication.status === status) {
+    if ((currentApplication as any).status === status) {
       return NextResponse.json({
         success: true,
         data: {
@@ -80,8 +80,8 @@ export async function PATCH(
     }
 
     // Update application status
-    const { error: updateError } = await adminClient
-      .from('applications')
+    const { error: updateError } = await (adminClient
+      .from('applications') as any)
       .update(updates)
       .eq('id', applicationId)
 
@@ -94,7 +94,7 @@ export async function PATCH(
       .from('application_status_history') as any)
       .insert({
         application_id: applicationId,
-        old_status: currentApplication.status,
+        old_status: (currentApplication as any).status,
         new_status: status,
         changed_by: user.id,
         rejection_reason: status === 'rejected' ? rejection_reason : null,
@@ -111,7 +111,7 @@ export async function PATCH(
       data: {
         message: `Application status updated to ${status}`,
         status: status,
-        previous_status: currentApplication.status
+        previous_status: (currentApplication as any).status
       }
     })
 
@@ -124,7 +124,7 @@ export async function PATCH(
         error: {
           message: 'Invalid request data',
           code: 'VALIDATION_ERROR',
-          details: error.errors
+          details: (error as any).errors
         }
       }, { status: 400 })
     }
@@ -149,8 +149,8 @@ export async function GET(
     const adminClient = createAdminClient()
 
     // Get application with status history
-    const { data: application, error: appError } = await adminClient
-      .from('applications')
+    const { data: application, error: appError } = await (adminClient
+      .from('applications') as any)
       .select(`
         *,
         candidate:candidates(

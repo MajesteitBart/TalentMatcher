@@ -279,41 +279,21 @@ export function WorkflowStateDisplay({
 
   if (showRaw) {
     return (
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <Code className="w-5 h-5" />
-            <span>{title} - Raw JSON</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
+      <>
+        <span>{title} - Raw JSON</span>
           <div className="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto">
             <pre className="text-sm font-mono">
               {JSON.stringify(data, null, 2)}
             </pre>
           </div>
-        </CardContent>
-      </Card>
+      </>
     )
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle
-          className="flex items-center justify-between cursor-pointer"
-          onClick={() => setExpanded(!expanded)}
-        >
-          <div className="flex items-center space-x-2">
-            {title === 'Parsed CV' ? <User className="w-5 h-5" /> : <Brain className="w-5 h-5" />}
-            <span>{title}</span>
-          </div>
-          {expanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-        </CardTitle>
-      </CardHeader>
+    <>
+          
 
-      {expanded && (
-        <CardContent className="space-y-4">
           {sections.length > 0 ? (
             <div className="space-y-3">
               {sections.map(renderSection)}
@@ -353,8 +333,8 @@ export function WorkflowStateDisplay({
               </div>
             </div>
           )}
-        </CardContent>
-      )}
-    </Card>
+
+      
+      </>
   )
 }

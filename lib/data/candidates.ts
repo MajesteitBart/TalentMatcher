@@ -46,10 +46,10 @@ export async function getCandidates(): Promise<CandidateWithApplications[]> {
   console.log(`Found ${candidatesData.length} candidates`)
 
   // Transform the data to match the expected type
-  return candidatesData.map(candidate => ({
-    ...candidate,
-    applications: candidate.applications.map(app => ({
-      ...app,
+  return candidatesData.map((candidate: any) => ({
+    ...(candidate as any),
+    applications: candidate.applications.map((app: any) => ({
+      ...(app as any),
       job: app.jobs
     }))
   }))
@@ -113,9 +113,9 @@ export async function getCandidate(id: string): Promise<CandidateWithApplication
 
   // Transform the data to match the expected type
   return {
-    ...data,
-    applications: data.applications.map(app => ({
-      ...app,
+    ...(data as any),
+    applications: (data as any).applications.map((app: any) => ({
+      ...(app as any),
       job: app.jobs
     }))
   }

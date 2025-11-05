@@ -60,7 +60,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<APIRespon
         error: {
           message: 'Invalid request data',
           code: 'VALIDATION_ERROR',
-          details: error.errors
+          details: (error as any).errors
         }
       }, { status: 400 })
     }

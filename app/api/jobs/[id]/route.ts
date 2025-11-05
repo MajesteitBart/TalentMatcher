@@ -17,9 +17,10 @@ const UpdateJobSchema = z.object({
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ): Promise<NextResponse<APIResponse>> {
   try {
+    const { id } = await params
     const supabase = createAdminClient()
 
     const { data, error } = await supabase
@@ -32,7 +33,7 @@ export async function GET(
           domain
         )
       `)
-      .eq('id', params.id)
+      .eq('id', id)
       .single()
 
     if (error) {
@@ -46,7 +47,7 @@ export async function GET(
         }, { status: 404 })
       }
 
-      logger.error('Error fetching job', { error: error.message, jobId: params.id })
+      logger.error('Error fetching job', { error: error.message, jobId: id })
       return NextResponse.json({
         success: false,
         error: {
@@ -62,7 +63,7 @@ export async function GET(
     })
 
   } catch (error) {
-    logger.error('Job fetch API error', { error, jobId: params.id })
+    logger.error('Job fetch API error', { error })
     return NextResponse.json({
       success: false,
       error: {
@@ -75,9 +76,10 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ): Promise<NextResponse<APIResponse>> {
   try {
+    const { id } = await params
     const body = await request.json()
     const validatedData = UpdateJobSchema.parse(body)
 
@@ -95,7 +97,7 @@ export async function PUT(
 
     const { data, error } = await (supabase.from('jobs') as any)
       .update(updateData)
-      .eq('id', params.id)
+      .eq('id', id)
       .select(`
         *,
         company: companies (
@@ -117,7 +119,7 @@ export async function PUT(
         }, { status: 404 })
       }
 
-      logger.error('Error updating job', { error: error.message, jobId: params.id, data: validatedData })
+      logger.error('Error updating job', { error: error.message, jobId: id, data: validatedData })
       return NextResponse.json({
         success: false,
         error: {
@@ -135,7 +137,7 @@ export async function PUT(
     })
 
   } catch (error) {
-    logger.error('Job update API error', { error, jobId: params.id })
+    logger.error('Job update API error', { error })
 
     if (error instanceof z.ZodError) {
       return NextResponse.json({
@@ -143,7 +145,7 @@ export async function PUT(
         error: {
           message: 'Invalid request data',
           code: 'VALIDATION_ERROR',
-          details: error.errors
+          details: (error as any).errors
         }
       }, { status: 400 })
     }
@@ -160,20 +162,21 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ): Promise<NextResponse<APIResponse>> {
   try {
+    const { id } = await params
     const supabase = createAdminClient()
 
     // First check if job has any applications
     const { data: applications, error: appError } = await supabase
       .from('applications')
       .select('id')
-      .eq('job_id', params.id)
+      .eq('job_id', id)
       .limit(1)
 
     if (appError) {
-      logger.error('Error checking job applications', { error: appError.message, jobId: params.id })
+      logger.error('Error checking job applications', { error: appError.message, jobId: id })
       return NextResponse.json({
         success: false,
         error: {
@@ -197,7 +200,7 @@ export async function DELETE(
     const { error } = await supabase
       .from('jobs')
       .delete()
-      .eq('id', params.id)
+      .eq('id', id)
 
     if (error) {
       if (error.code === 'PGRST116') {
@@ -210,7 +213,7 @@ export async function DELETE(
         }, { status: 404 })
       }
 
-      logger.error('Error deleting job', { error: error.message, jobId: params.id })
+      logger.error('Error deleting job', { error: error.message, jobId: id })
       return NextResponse.json({
         success: false,
         error: {
@@ -220,7 +223,7 @@ export async function DELETE(
       }, { status: 500 })
     }
 
-    logger.info('Job deleted successfully', { jobId: params.id })
+    logger.info('Job deleted successfully', { jobId: id })
 
     return NextResponse.json({
       success: true,
@@ -228,7 +231,7 @@ export async function DELETE(
     })
 
   } catch (error) {
-    logger.error('Job deletion API error', { error, jobId: params.id })
+    logger.error('Job deletion API error', { error })
     return NextResponse.json({
       success: false,
       error: {

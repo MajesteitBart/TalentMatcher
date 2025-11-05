@@ -124,7 +124,7 @@ export async function GET(
     })
 
   } catch (error) {
-    logger.error('Job candidates API error', { error, jobId: jobId })
+    logger.error('Job candidates API error', { error })
     return NextResponse.json({
       success: false,
       error: {

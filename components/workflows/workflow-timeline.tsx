@@ -130,8 +130,8 @@ export function WorkflowTimeline({ workflow }: WorkflowTimelineProps) {
       const date = new Date(timestamp)
       return (
         <div className="text-xs text-gray-500">
-          <div>{format(date, 'MMM d, yyyy HH:mm:ss')}</div>
-          <div>{formatDistanceToNow(date, { addSuffix: true })}</div>
+          {/* <div>{format(date, 'MMM d, yyyy HH:mm:ss')}</div> */}
+          <p>{formatDistanceToNow(date, { addSuffix: true })}</p>
         </div>
       )
     } catch {
@@ -199,11 +199,7 @@ export function WorkflowTimeline({ workflow }: WorkflowTimelineProps) {
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Workflow Timeline</CardTitle>
-      </CardHeader>
-      <CardContent>
+    <>
         <div className="space-y-4">
           {timelineSteps.map((step, index) => (
             <div key={step.key} className="flex items-start space-x-4">
@@ -224,16 +220,15 @@ export function WorkflowTimeline({ workflow }: WorkflowTimelineProps) {
                       <p className="text-sm text-gray-600 mt-1">{step.description}</p>
                     )}
                   </div>
-                  <div className="flex flex-col items-end space-y-1">
-                    <Badge className={getStepColor(step.status)}>
-                      {step.status}
-                    </Badge>
+                  <div className="flex flex-row items-center space-x-3 ">
+                    
+                  <div>
                     {formatTimestamp(step.timestamp)}
-                    {getStepDuration(step.key) && (
-                      <span className="text-xs text-gray-500">
-                        Duration: {getStepDuration(step.key)}
-                      </span>
-                    )}
+                    
+                  </div>
+                  <Badge className={getStepColor(step.status)}>
+                    {step.status}
+                  </Badge>
                   </div>
                 </div>
               </div>
@@ -270,8 +265,7 @@ export function WorkflowTimeline({ workflow }: WorkflowTimelineProps) {
             </div>
           </div>
         </div>
-      </CardContent>
-    </Card>
+    </>
   )
 }
 

@@ -36,8 +36,8 @@ export async function getCompany(id: string) {
 export async function createCompany(companyData: { name: string; domain?: string | null }) {
   const supabase = createAdminClient()
 
-  const { data, error } = await supabase
-    .from('companies')
+  const { data, error } = await (supabase
+    .from('companies') as any)
     .insert({
       name: companyData.name,
       domain: companyData.domain || null,

@@ -204,7 +204,7 @@ export function CandidateSearchClient({ candidates }: CandidateSearchClientProps
                       </div>
 
                       <div className="flex items-center gap-2">
-                        <Button size="sm" variant="success" asChild className="hover:scale-105 transition-transform">
+                        <Button size="sm" variant="success" asChild>
                           <Link href={`/candidates/${candidate.id}`}>
                               View
                               <ArrowRight className="w-4 h-4 ml-2" />

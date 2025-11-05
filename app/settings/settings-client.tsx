@@ -232,7 +232,7 @@ export function SettingsClient({ initialCompanies, initialCompany }: SettingsCli
             </Card>
           ) : (
             companies.map((company) => (
-              <Card key={company.id} className="hover:shadow-md transition-shadow">
+              <Card key={company.id} className="border">
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-2">
