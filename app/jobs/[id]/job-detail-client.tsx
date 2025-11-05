@@ -7,7 +7,7 @@ import { CandidateListForJob } from '@/components/jobs/candidate-list-for-job'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { ArrowLeft, Edit, Trash2, Users, Briefcase, MapPin, Clock } from 'lucide-react'
+import { ArrowLeft, Edit, Trash2, Users, Briefcase, MapPin, Clock, Plus } from 'lucide-react'
 import { toast } from 'sonner'
 import type { JobWithCompany } from '@/lib/types/database'
 import { LayoutWrapper } from '@/components/layout/layout-wrapper'
@@ -105,26 +105,7 @@ export function JobDetailClient({ job }: JobDetailClientProps) {
        
       </div>
 
-        <div className="flex items-center space-x-2">
-          <Button
-            variant="outline"
-            onClick={() => router.push(`/jobs/${job.id}/edit`)}
-            className="flex items-center space-x-2"
-          >
-            <Edit className="h-4 w-4" />
-            <span>Edit</span>
-          </Button>
-          <Button
-            variant="outline"
-            onClick={handleDelete}
-            disabled={isDeleting}
-            className="flex items-center space-x-2 text-red-600 hover:text-red-700 hover:bg-red-50"
-          >
-            <Trash2 className="h-4 w-4" />
-            <span>{isDeleting ? 'Deleting...' : 'Delete'}</span>
-          </Button>
     </div>
-  </div>
     
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -134,7 +115,7 @@ export function JobDetailClient({ job }: JobDetailClientProps) {
           <JobDetail job={job} />
 
           {/* Candidates Section */}
-          <Card>
+          <Card id="candidates-section">
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2">
@@ -157,17 +138,71 @@ export function JobDetailClient({ job }: JobDetailClientProps) {
 
         {/* Sidebar */}
         <div className="space-y-6">
-          {/* Quick Stats */}
+          {/* Quick Actions */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg">Quick Stats</CardTitle>
+              <CardTitle className="text-lg">Quick Actions</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <Button
+                className="w-full"
+                onClick={() => router.push(`/jobs/${job.id}/edit`)}
+              >
+                <Edit className="h-4 w-4 mr-2" />
+                Edit Job
+              </Button>
+              <Button
+                variant="outline"
+                className="w-full"
+                onClick={() => router.push('/candidates/add')}
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Add Candidate
+              </Button>
+              <Button
+                variant="outline"
+                className="w-full text-red-600 hover:text-red-700 hover:bg-red-50"
+                onClick={handleDelete}
+                disabled={isDeleting}
+              >
+                <Trash2 className="h-4 w-4 mr-2" />
+                {isDeleting ? 'Deleting...' : 'Delete Job'}
+              </Button>
+            </CardContent>
+          </Card>
+
+          {/* Application Statistics */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Applications</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-600">Total Applicants</span>
-                <span className="font-semibold">{candidateStats.total}</span>
+              <div className="p-4 bg-blue-50 rounded-lg border border-blue-100">
+                <div className="text-center">
+                  <p className="text-2xl font-bold text-blue-800">{candidateStats.total}</p>
+                  <p className="text-sm text-blue-600">Total Applicants</p>
+                </div>
               </div>
-              <div className="flex justify-between items-center">
+              {candidateStats.total > 0 && (
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  onClick={() => document.getElementById('candidates-section')?.scrollIntoView({ behavior: 'smooth' })}
+                >
+                  <Users className="h-4 w-4 mr-2" />
+                  View All Candidates
+                </Button>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Job Summary */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Job Summary</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div className="flex items-center justify-between">
                 <span className="text-sm text-gray-600">Status</span>
                 <Badge
                   variant={job.status === 'active' ? 'default' : 'secondary'}
@@ -176,58 +211,27 @@ export function JobDetailClient({ job }: JobDetailClientProps) {
                   {job.status}
                 </Badge>
               </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-600">Required Skills</span>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-gray-600">Experience Level</span>
+                <Badge className="bg-blue-100 text-blue-800">
+                  {job.experience_level}
+                </Badge>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-gray-600">Job Type</span>
+                <Badge className="bg-indigo-100 text-indigo-800">
+                  {job.job_type.replace('-', ' ')}
+                </Badge>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-gray-600">Skills Required</span>
                 <span className="font-semibold">{job.required_skills.length}</span>
               </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-600">Posted Date</span>
-                <span className="text-sm">{formatDate(job.created_at)}</span>
+              <div className="pt-3 border-t">
+                <p className="text-xs text-gray-500">
+                  Posted {formatDate(job.created_at)}
+                </p>
               </div>
-            </CardContent>
-          </Card>
-
-          {/* Required Skills */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Required Skills</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-wrap gap-2">
-                {job.required_skills.map((skill, index) => (
-                  <Badge key={index} variant="outline">
-                    {skill}
-                  </Badge>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Company Info */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Company Information</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              <div>
-                <span className="text-sm text-gray-600">Name</span>
-                <p className="font-medium">{job.company?.name}</p>
-              </div>
-              {job.company?.domain && (
-                <div>
-                  <span className="text-sm text-gray-600">Website</span>
-                  <p className="font-medium">
-                    <a
-                      href={`https://${job.company.domain}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-blue-600 hover:underline"
-                    >
-                      {job.company.domain}
-                    </a>
-                  </p>
-                </div>
-              )}
             </CardContent>
           </Card>
         </div>

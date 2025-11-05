@@ -78,7 +78,7 @@ export function CandidateSearchClient({ candidates }: CandidateSearchClientProps
   return (
     <div className="space-y-6">
       {/* Search and Filter Controls */}
-      <Card className=" border-0 shadow-md">
+      <Card>
         <CardContent className="p-6">
           <div className="flex items-center gap-2 mb-4">
             <Search className="w-5 h-5 text-muted-foreground" />
@@ -146,8 +146,8 @@ export function CandidateSearchClient({ candidates }: CandidateSearchClientProps
 
       {/* Results Display */}
       {filteredCandidates.length > 0 && (
-      
-            <div className="p-0">
+        <Card>
+          <CardContent className="p-0">
               {filteredCandidates.map((candidate) => {
                 const latestApplication = candidate.applications[0]
                 const hasRejection = candidate.applications.some(
@@ -216,8 +216,8 @@ export function CandidateSearchClient({ candidates }: CandidateSearchClientProps
                   </div>
                 )
               })}
-            </div>
-        
+          </CardContent>
+        </Card>
       )}
 
       {filteredCandidates.length === 0 && hasActiveFilters && (

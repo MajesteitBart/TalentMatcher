@@ -1,13 +1,14 @@
 import { LayoutWrapper } from '@/components/layout/layout-wrapper'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { getCandidate } from '@/lib/data/candidates'
 import { formatDistanceToNow } from 'date-fns'
 import Link from 'next/link'
-import { ArrowLeft, Mail, Phone, Briefcase } from 'lucide-react'
+import { ArrowLeft, Mail, Phone, Briefcase, Plus } from 'lucide-react'
 import { notFound } from 'next/navigation'
 import { CandidateApplications } from '@/components/candidates/candidate-applications'
 import { AlternativeMatches } from '@/components/candidates/alternative-matches'
+import { Badge } from '@/components/ui/badge'
 
 // Force dynamic rendering - no caching
 export const dynamic = 'force-dynamic'
@@ -40,44 +41,48 @@ export default async function CandidateDetailPage({
         </div>
 
         <div className="grid gap-6 lg:grid-cols-3">
-          <div className="lg:col-span-1">
+          {/* Left Column - Candidate Info & Quick Actions */}
+          <div className="lg:col-span-1 space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>Candidate Information</CardTitle>
+                <CardTitle className="flex items-center gap-2">
+                  <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
+                    <span className="text-primary font-semibold text-sm">
+                      {candidate.name.split(' ').map(n => n[0]).join('').toUpperCase()}
+                    </span>
+                  </div>
+                  {candidate.name}
+                </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div>
-                  <h3 className="text-lg font-medium text-gray-900">
-                    {candidate.name}
-                  </h3>
-                  <div className="space-y-2 mt-4">
-                    <div className="flex items-center space-x-2 text-sm text-gray-600">
-                      <Mail className="w-4 h-4" />
-                      <span>{candidate.email}</span>
-                    </div>
-                    {candidate.phone && (
-                      <div className="flex items-center space-x-2 text-sm text-gray-600">
-                        <Phone className="w-4 h-4" />
-                        <span>{candidate.phone}</span>
-                      </div>
-                    )}
-                    {candidate.linkedin_url && (
-                      <div className="text-sm">
-                        <a
-                          href={candidate.linkedin_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-blue-600 hover:underline"
-                        >
-                          LinkedIn Profile
-                        </a>
-                      </div>
-                    )}
+                <div className="space-y-3">
+                  <div className="flex items-center space-x-3 text-sm">
+                    <Mail className="w-4 h-4 text-muted-foreground" />
+                    <span>{candidate.email}</span>
                   </div>
+                  {candidate.phone && (
+                    <div className="flex items-center space-x-3 text-sm">
+                      <Phone className="w-4 h-4 text-muted-foreground" />
+                      <span>{candidate.phone}</span>
+                    </div>
+                  )}
+                  {candidate.linkedin_url && (
+                    <div className="flex items-center space-x-3 text-sm">
+                      <Briefcase className="w-4 h-4 text-muted-foreground" />
+                      <a
+                        href={candidate.linkedin_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:underline"
+                      >
+                        LinkedIn Profile
+                      </a>
+                    </div>
+                  )}
                 </div>
 
-                <div className="pt-4 border-t border-gray-200">
-                  <p className="text-sm text-gray-500">
+                <div className="pt-4 border-t">
+                  <p className="text-xs text-muted-foreground">
                     Added {formatDistanceToNow(new Date(candidate.created_at), {
                       addSuffix: true,
                     })}
@@ -86,36 +91,90 @@ export default async function CandidateDetailPage({
               </CardContent>
             </Card>
 
-            <Card className="mt-6">
+            {/* Quick Actions */}
+            <Card>
               <CardHeader>
-                <CardTitle>Applications</CardTitle>
+                <CardTitle className="text-lg">Quick Actions</CardTitle>
               </CardHeader>
-              <CardContent>
-                <CandidateApplications
-                  applications={candidate.applications}
-                  candidate={candidate}
-                />
+              <CardContent className="space-y-3">
+                <Button variant="outline" className="w-full" asChild>
+                  <Link href="/candidates">
+                    <ArrowLeft className="w-4 h-4 mr-2" />
+                    Back to Candidates
+                  </Link>
+                </Button>
+                <Button className="w-full" asChild>
+                  <Link href="/jobs/new">
+                    <Plus className="w-4 h-4 mr-2" />
+                    Create Job for Candidate
+                  </Link>
+                </Button>
               </CardContent>
             </Card>
           </div>
 
+          {/* Right Column - Main Content */}
           <div className="lg:col-span-2 space-y-6">
+            {/* Applications Section */}
+            <Card id="applications-section">
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Briefcase className="w-5 h-5 text-primary" />
+                    <CardTitle>Applications</CardTitle>
+                  </div>
+                  <Badge variant="secondary">
+                    {candidate.applications?.length || 0} application{(candidate.applications?.length || 0) !== 1 ? 's' : ''}
+                  </Badge>
+                </div>
+                <CardDescription>
+                  Job applications and interview history
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {candidate.applications && candidate.applications.length > 0 ? (
+                  <CandidateApplications
+                    applications={candidate.applications}
+                    candidate={candidate}
+                  />
+                ) : (
+                  <div className="text-center py-8">
+                    <p className="text-muted-foreground">No applications yet</p>
+                    <Button variant="outline" className="mt-4" asChild>
+                      <Link href="/jobs">Browse Available Jobs</Link>
+                    </Button>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* CV Content Section */}
             <Card>
               <CardHeader>
-                <CardTitle>CV Content</CardTitle>
+                <CardTitle className="flex items-center gap-2">
+                  <div className="w-8 h-8 bg-muted rounded-lg flex items-center justify-center">
+                    <span className="text-xs font-medium">CV</span>
+                  </div>
+                  Resume Content
+                </CardTitle>
+                <CardDescription>
+                  Full resume and qualifications
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="prose max-w-none">
-                  
-                  {candidate.cv_text}
-               
+                  <div className="bg-muted/20 rounded-lg p-6 border border-border/50">
+                    <pre className="whitespace-pre-wrap text-sm text-foreground leading-relaxed font-sans">
+                      {candidate.cv_text || 'No CV content available'}
+                    </pre>
+                  </div>
                 </div>
               </CardContent>
             </Card>
 
             {/* Alternative Job Matches */}
-            {candidate.applications?.some(app =>
-              (app as any).workflow_executions?.some((exec: any) =>
+            {candidate.applications && candidate.applications.length > 0 && candidate.applications.some(app =>
+              (app as any).workflow_executions && (app as any).workflow_executions.some((exec: any) =>
                 exec.alternative_jobs && exec.alternative_jobs.length > 0
               )
             ) && (

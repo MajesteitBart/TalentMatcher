@@ -232,18 +232,24 @@ export function SettingsClient({ initialCompanies, initialCompany }: SettingsCli
             </Card>
           ) : (
             companies.map((company) => (
-              <Card key={company.id} className="border">
+              <Card key={company.id} className="border hover:shadow-sm transition-shadow">
                 <CardHeader>
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-2">
-                      <Building2 className="w-5 h-5 text-blue-600" />
-                      <CardTitle className="text-lg truncate">{company.name}</CardTitle>
+                    <div className="flex items-center space-x-3">
+                      <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+                        <Building2 className="w-5 h-5 text-primary" />
+                      </div>
+                      <div>
+                        <CardTitle className="text-lg truncate">{company.name}</CardTitle>
+                        <p className="text-sm text-muted-foreground">Company ID: {company.id}</p>
+                      </div>
                     </div>
                     <div className="flex items-center space-x-1">
                       <Button
                         variant="ghost"
                         size="sm"
                         onClick={() => openEditModal(company)}
+                        className="hover:bg-muted"
                       >
                         <Edit2 className="w-4 h-4" />
                       </Button>
@@ -253,16 +259,22 @@ export function SettingsClient({ initialCompanies, initialCompany }: SettingsCli
                 <CardContent>
                   <div className="space-y-3">
                     {company.domain && (
-                      <div className="flex items-center space-x-2 text-sm text-gray-600">
-                        <Globe className="w-4 h-4" />
-                        <span className="truncate">{company.domain}</span>
+                      <div className="flex items-center space-x-3 text-sm">
+                        <Globe className="w-4 h-4 text-muted-foreground" />
+                        <a
+                          href={`https://${company.domain}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-600 hover:underline truncate"
+                        >
+                          {company.domain}
+                        </a>
                       </div>
                     )}
-                    <div className="text-sm text-gray-500">
-                      Created {formatCreatedAt(company.created_at)}
-                    </div>
-                    <div className="text-xs text-gray-400">
-                      ID: {company.id}
+                    <div className="pt-3 border-t">
+                      <p className="text-xs text-muted-foreground">
+                        Created {formatCreatedAt(company.created_at)}
+                      </p>
                     </div>
                   </div>
                 </CardContent>
