@@ -1,14 +1,14 @@
 import { LayoutWrapper } from '@/components/layout/layout-wrapper'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
 import { getCandidate } from '@/lib/data/candidates'
 import { formatDistanceToNow } from 'date-fns'
 import Link from 'next/link'
-import { ArrowLeft, Mail, Phone, Briefcase, Plus, UserPlus } from 'lucide-react'
+import { ArrowLeft, Mail, Phone, Briefcase, UserPlus, Calendar } from 'lucide-react'
 import { notFound } from 'next/navigation'
 import { CandidateApplications } from '@/components/candidates/candidate-applications'
 import { AlternativeMatches } from '@/components/candidates/alternative-matches'
-import { Badge } from '@/components/ui/badge'
 
 // Force dynamic rendering - no caching
 export const dynamic = 'force-dynamic'
@@ -22,210 +22,200 @@ export default async function CandidateDetailPage({
   const { id } = await params
   const candidate = await getCandidate(id)
 
-  console.log('Fetched candidate:', JSON.stringify(candidate?.applications, null, 2))
-
   if (!candidate) {
     notFound()
   }
 
+  const applicationCount = candidate.applications?.length || 0
+  const hasAlternativeMatches = candidate.applications &&
+    candidate.applications.some(app =>
+      (app as any).workflow_executions &&
+      (app as any).workflow_executions.some((exec: any) =>
+        exec.alternative_jobs &&
+        exec.alternative_jobs.length > 0
+      )
+    )
+
   return (
     <LayoutWrapper>
-      <div className="space-y-6">
-        <div className="flex items-center space-x-4">
-          <Button size="sm" asChild>
-            <Link href="/candidates">
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Candidates
-            </Link>
-          </Button>
+      <div className="max-w-4xl mx-auto space-y-6">
+        {/* Clean Header with Essential Info Only */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-4">
+            <Button size="sm" variant="ghost" asChild>
+              <Link href="/candidates">
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Back
+              </Link>
+            </Button>
+          </div>
+          <div className="flex items-center space-x-2">
+            <Button size="sm" asChild>
+              <Link href={`/jobs?candidate=${candidate.id}`}>
+                <UserPlus className="w-4 h-4 mr-2" />
+                Add Application
+              </Link>
+            </Button>
+          </div>
         </div>
 
-        <div className="grid gap-6 lg:grid-cols-3">
-          {/* Left Column - Candidate Info & Quick Actions */}
-          <div className="lg:col-span-1 space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
-                    <span className="text-primary font-semibold text-sm">
-                      {candidate.name.split(' ').map(n => n[0]).join('').toUpperCase()}
-                    </span>
-                  </div>
-                  {candidate.name}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-3">
-                  <div className="flex items-center space-x-3 text-sm">
-                    <Mail className="w-4 h-4 text-muted-foreground" />
+        {/* Single-Source Candidate Summary */}
+        <Card className="border-0 shadow-sm">
+          <CardContent className="pt-6">
+            <div className="flex items-start space-x-6">
+              {/* Clean Avatar */}
+              <div className="flex-shrink-0">
+                <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
+                  <span className="text-primary font-semibold text-xl">
+                    {candidate.name.split(' ').map(n => n[0]).join('').toUpperCase()}
+                  </span>
+                </div>
+              </div>
+
+              {/* Essential Information - No Duplication */}
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center space-x-3 mb-2">
+                  <h1 className="text-2xl font-bold text-foreground truncate">
+                    {candidate.name}
+                  </h1>
+                  <Badge variant={applicationCount > 0 ? "secondary" : "outline"} className="text-xs">
+                    {applicationCount} {applicationCount === 1 ? 'application' : 'applications'}
+                  </Badge>
+                </div>
+
+                <div className="flex items-center space-x-4 text-sm text-muted-foreground mb-3">
+                  <div className="flex items-center space-x-1">
+                    <Mail className="w-4 h-4" />
                     <span>{candidate.email}</span>
                   </div>
                   {candidate.phone && (
-                    <div className="flex items-center space-x-3 text-sm">
-                      <Phone className="w-4 h-4 text-muted-foreground" />
+                    <>
+                      <span>•</span>
                       <span>{candidate.phone}</span>
-                    </div>
+                    </>
                   )}
+                </div>
+
+                <div className="flex items-center space-x-6 text-sm text-muted-foreground">
+                  <div className="flex items-center space-x-1">
+                    <Calendar className="w-4 h-4" />
+                    <span>Added {formatDistanceToNow(new Date(candidate.created_at), { addSuffix: true })}</span>
+                  </div>
                   {candidate.linkedin_url && (
-                    <div className="flex items-center space-x-3 text-sm">
-                      <Briefcase className="w-4 h-4 text-muted-foreground" />
+                    <div>
                       <a
                         href={candidate.linkedin_url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-blue-600 hover:underline"
+                        className="text-blue-600 hover:text-blue-700 hover:underline"
                       >
-                        LinkedIn Profile
+                        LinkedIn
                       </a>
                     </div>
                   )}
                 </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
-                <div className="pt-4 border-t">
-                  <p className="text-xs text-muted-foreground">
-                    Added {formatDistanceToNow(new Date(candidate.created_at), {
-                      addSuffix: true,
-                    })}
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Quick Actions */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Quick Actions</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <Button variant="outline" className="w-full" asChild>
-                  <Link href="/candidates">
-                    <ArrowLeft className="w-4 h-4 mr-2" />
-                    Back to Candidates
-                  </Link>
-                </Button>
-                <Button className="w-full" asChild>
-                  <Link href={`/jobs?candidate=${id}`}>
-                    <UserPlus className="w-4 h-4 mr-2" />
-                    Add Application
-                  </Link>
-                </Button>
-                <Button variant="outline" className="w-full" asChild>
-                  <Link href="/jobs/new">
-                    <Plus className="w-4 h-4 mr-2" />
-                    Create Job for Candidate
-                  </Link>
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Right Column - Main Content */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* Applications Section */}
-            <Card id="applications-section">
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
+        {/* Single Column Layout - Better Focus */}
+        <div className="space-y-6">
+          {/* Applications - Priority Content */}
+          <Card>
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="flex items-center space-x-2">
                     <Briefcase className="w-5 h-5 text-primary" />
-                    <CardTitle>Applications</CardTitle>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Button size="sm" asChild>
-                      <Link href={`/jobs?candidate=${id}`}>
+                    <span>Applications</span>
+                  </CardTitle>
+                  <CardDescription className="mt-1">
+                    Job applications and interview history
+                  </CardDescription>
+                </div>
+                {applicationCount === 0 && (
+                  <Button size="sm" asChild>
+                    <Link href={`/jobs?candidate=${candidate.id}`}>
+                      <UserPlus className="w-4 h-4 mr-2" />
+                      Add Application
+                    </Link>
+                  </Button>
+                )}
+              </div>
+            </CardHeader>
+            <CardContent>
+              {applicationCount > 0 ? (
+                <CandidateApplications
+                  applications={candidate.applications!}
+                  candidate={candidate}
+                />
+              ) : (
+                <div className="text-center py-8">
+                  <Briefcase className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
+                  <p className="text-muted-foreground mb-4">No applications yet</p>
+                  <div className="flex justify-center space-x-3">
+                    <Button asChild>
+                      <Link href={`/jobs?candidate=${candidate.id}`}>
                         <UserPlus className="w-4 h-4 mr-2" />
                         Add Application
                       </Link>
                     </Button>
-                    <Badge variant="secondary">
-                      {candidate.applications?.length || 0} application{(candidate.applications?.length || 0) !== 1 ? 's' : ''}
-                    </Badge>
+                    <Button variant="outline" asChild>
+                      <Link href="/jobs">Browse Jobs</Link>
+                    </Button>
                   </div>
                 </div>
-                <CardDescription>
-                  Job applications and interview history
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                {candidate.applications && candidate.applications.length > 0 ? (
-                  <CandidateApplications
-                    applications={candidate.applications}
-                    candidate={candidate}
-                  />
-                ) : (
-                  <div className="text-center py-8">
-                    <UserPlus className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                    <p className="text-muted-foreground mb-4">No applications yet</p>
-                    <div className="flex justify-center gap-3">
-                      <Button className="mt-4" asChild>
-                        <Link href={`/jobs?candidate=${id}`}>
-                          <UserPlus className="w-4 h-4 mr-2" />
-                          Add Application
-                        </Link>
-                      </Button>
-                      <Button variant="outline" className="mt-4" asChild>
-                        <Link href="/jobs">Browse Jobs</Link>
-                      </Button>
-                    </div>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+              )}
+            </CardContent>
+          </Card>
 
-            {/* CV Content Section */}
+          {/* Alternative Matches - Priority Content */}
+          {hasAlternativeMatches && (
+            <AlternativeMatches
+              matches={candidate.applications!
+                .flatMap((app: any) => (app as any).workflow_executions || [])
+                .flatMap((exec: any) => exec.alternative_jobs || [])
+                .filter(job => job && job.jobs && job.jobs.id)
+                .filter((job, index, self) =>
+                  self.findIndex(j => j.jobs.id === job.jobs.id) === index
+                )
+                .map(job => ({
+                  id: job.jobs.id,
+                  title: job.jobs.title,
+                  department: job.jobs.department,
+                  location: job.jobs.location,
+                  description: job.jobs.description,
+                  composite_score: job?.composite_score || 0,
+                  skills_score: job?.match_reasons?.skills,
+                  experience_score: job?.match_reasons?.experience,
+                  profile_score: job?.match_reasons?.profile
+                }))}
+              candidateName={candidate.name}
+            />
+          )}
+
+          {/* CV Content - Simplified Card */}
+          {candidate.cv_text && (
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <div className="w-8 h-8 bg-muted rounded-lg flex items-center justify-center">
-                    <span className="text-xs font-medium">CV</span>
-                  </div>
-                  Resume Content
-                </CardTitle>
+                <CardTitle className="text-lg">Resume Content</CardTitle>
                 <CardDescription>
                   Full resume and qualifications
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="prose max-w-none">
-                  <div className="bg-muted/20 rounded-lg p-6 border border-border/50">
-                    <pre className="whitespace-pre-wrap text-sm text-foreground leading-relaxed font-sans">
-                      {candidate.cv_text || 'No CV content available'}
-                    </pre>
-                  </div>
+                <div className="bg-muted/20 rounded-lg p-6 max-h-96 overflow-y-auto">
+                  <pre className="whitespace-pre-wrap text-sm text-foreground leading-relaxed font-sans">
+                    {candidate.cv_text}
+                  </pre>
                 </div>
               </CardContent>
             </Card>
-
-            {/* Alternative Job Matches */}
-            {candidate.applications && candidate.applications.length > 0 && candidate.applications.some(app =>
-              (app as any).workflow_executions && (app as any).workflow_executions.some((exec: any) =>
-                exec.alternative_jobs && exec.alternative_jobs.length > 0
-              )
-            ) && (
-              <AlternativeMatches
-                matches={candidate.applications
-                  .flatMap((app: any) => (app as any).workflow_executions || [])
-                  .flatMap((exec: any) => exec.alternative_jobs || [])
-                  .filter(job => job && job.jobs && job.jobs.id) // Filter out invalid items
-                  .filter((job, index, self) =>
-                    self.findIndex(j => j.jobs.id === job.jobs.id) === index
-                  )
-                  .map(job => ({
-                    id: job.jobs.id,
-                    title: job.jobs.title,
-                    department: job.jobs.department,
-                    location: job.jobs.location,
-                    description: job.jobs.description,
-                    composite_score: job?.composite_score || 0,
-                    skills_score: job?.match_reasons?.skills,
-                    experience_score: job?.match_reasons?.experience,
-                    profile_score: job?.match_reasons?.profile
-                  }))}
-                candidateName={candidate.name}
-              />
-            )}
-          </div>
+          )}
         </div>
       </div>
     </LayoutWrapper>
   )
 }
+

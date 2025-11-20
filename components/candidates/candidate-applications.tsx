@@ -94,45 +94,41 @@ export function CandidateApplications({ applications, candidate }: CandidateAppl
   }
 
   return (
-    <div className="space-y-4" key={refreshKey}>
+    <div className="space-y-3" key={refreshKey}>
       {applications.map((application) => (
         <div
           key={application.id}
-          className="p-4 rounded-lg border border-border bg-gradient-to-r from-background to-muted/10"
+          className="p-4 rounded-lg border border-border/50 hover:bg-muted/30 transition-colors"
         >
-          <div className="flex items-start justify-between mb-4">
-            <div className="flex-1">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-8 h-8 bg-primary/10 rounded-md flex items-center justify-center">
-                  <Building2 className="w-4 h-4 text-primary" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-foreground">{application.job.title}</h3>
-                  <Badge className={`status-badge status-${application.status} mt-1`}>
-                    {application.status.replace('_', ' ')}
-                  </Badge>
-                </div>
+          {/* Clean Header */}
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-3 mb-1">
+                <h3 className="font-semibold text-foreground truncate">{application.job.title}</h3>
+                <Badge variant={application.status === 'rejected' ? 'destructive' : 'secondary'} className="text-xs">
+                  {application.status.replace('_', ' ')}
+                </Badge>
               </div>
-              <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-                <div className="flex items-center space-x-2">
-                  <Building2 className="h-4 w-4" />
-                  <span>{application.job.department || 'No department'}</span>
-                </div>
-                {application.job.location && (
-                  <span className="flex items-center space-x-1">
-                    <span>•</span>
-                    <span>{application.job.location}</span>
-                  </span>
+
+              {/* Compact Meta Info */}
+              <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                {application.job.department && (
+                  <span>{application.job.department}</span>
                 )}
-                <div className="flex items-center space-x-2">
-                  <Calendar className="h-4 w-4" />
-                  <span>Applied {formatDate(application.applied_at)}</span>
-                </div>
+                {application.job.location && application.job.department && (
+                  <span>•</span>
+                )}
+                {application.job.location && (
+                  <span>{application.job.location}</span>
+                )}
+                <span>•</span>
+                <span>{formatDate(application.applied_at)}</span>
               </div>
             </div>
           </div>
 
-          <div className="mt-4 flex items-center justify-between">
+          {/* Actions - Cleaner Layout */}
+          <div className="flex items-center justify-between">
             <ApplicationStatusDropdown
               applicationId={application.id}
               currentStatus={application.status}
@@ -140,28 +136,30 @@ export function CandidateApplications({ applications, candidate }: CandidateAppl
               disabled={isLoading || application.status === 'rejected'}
             />
 
-            <Button size="sm" variant="outline" asChild>
-              <a href={`/jobs/${application.job.id}`} target="_blank" rel="noopener noreferrer">
-                <ExternalLink className="w-4 h-4 mr-2" />
-                View Job
-              </a>
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button size="sm" variant="ghost" asChild>
+                <a href={`/jobs/${application.job.id}`} target="_blank" rel="noopener noreferrer">
+                  <ExternalLink className="w-4 h-4" />
+                  <span className="sr-only">View Job</span>
+                </a>
+              </Button>
+            </div>
           </div>
 
-          {/* Rejection Reason */}
+          {/* Rejection Reason - More Compact */}
           {application.status === 'rejected' && application.rejection_reason && (
-            <div className="mt-4 p-4 bg-destructive/5 border border-destructive/20 rounded-lg">
-              <p className="text-sm font-medium text-destructive mb-1">Rejection Reason:</p>
-              <p className="text-sm text-muted-foreground">{application.rejection_reason}</p>
+            <div className="mt-3 p-3 bg-red-50 border border-red-100 rounded-md">
+              <p className="text-xs font-medium text-red-800 mb-1">Rejection Reason:</p>
+              <p className="text-xs text-red-700">{application.rejection_reason}</p>
             </div>
           )}
 
-          {/* Status History Timeline */}
-          <div className="mt-4">
+          {/* Status Timeline - More Compact */}
+          <div className="mt-3">
             <ApplicationStatusTimeline
               applicationId={application.id}
               compact={true}
-              maxItems={3}
+              maxItems={2}
             />
           </div>
         </div>

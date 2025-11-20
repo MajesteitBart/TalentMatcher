@@ -292,36 +292,33 @@ export function CandidateListForJob({ jobId }: CandidateListForJobProps) {
                   )}
                 </TableCell>
                 <TableCell>
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center gap-1">
                     <Button
-                      variant="outline"
+                      variant="ghost"
                       size="sm"
                       onClick={() => router.push(`/candidates/${candidate.id}`)}
-                      className="flex items-center space-x-1"
                     >
-                      <User className="h-3 w-3" />
-                      <span>View Profile</span>
+                      <User className="h-4 w-4" />
+                      <span className="sr-only">View Profile</span>
                     </Button>
                     {candidate.cv_file_url && (
                       <Button
-                        variant="outline"
+                        variant="ghost"
                         size="sm"
                         onClick={() => candidate.cv_file_url && window.open(candidate.cv_file_url, '_blank')}
-                        className="flex items-center space-x-1"
                       >
-                        <FileText className="h-3 w-3" />
-                        <span>CV</span>
+                        <FileText className="h-4 w-4" />
+                        <span className="sr-only">View CV</span>
                       </Button>
                     )}
                     {candidate.linkedin_url && (
                       <Button
-                        variant="outline"
+                        variant="ghost"
                         size="sm"
                         onClick={() => candidate.linkedin_url && window.open(candidate.linkedin_url, '_blank')}
-                        className="flex items-center space-x-1"
                       >
-                        <ExternalLink className="h-3 w-3" />
-                        <span>LinkedIn</span>
+                        <ExternalLink className="h-4 w-4" />
+                        <span className="sr-only">LinkedIn</span>
                       </Button>
                     )}
                   </div>

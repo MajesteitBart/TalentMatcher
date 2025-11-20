@@ -2,15 +2,15 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import { JobDetail } from '@/components/jobs/job-detail'
 import { CandidateListForJob } from '@/components/jobs/candidate-list-for-job'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { ArrowLeft, Edit, Trash2, Users, Briefcase, MapPin, Clock, Plus } from 'lucide-react'
+import { ArrowLeft, Edit, Trash2, Users, Plus, Building, MapPin, Briefcase } from 'lucide-react'
 import { toast } from 'sonner'
 import type { JobWithCompany } from '@/lib/types/database'
 import { LayoutWrapper } from '@/components/layout/layout-wrapper'
+import { formatDistanceToNow } from 'date-fns'
 
 interface JobDetailClientProps {
   job: JobWithCompany
@@ -20,11 +20,7 @@ export function JobDetailClient({ job }: JobDetailClientProps) {
   const router = useRouter()
   const [isDeleting, setIsDeleting] = useState(false)
   const [candidateStats, setCandidateStats] = useState({
-    total: 0,
-    pending: 0,
-    interviewing: 0,
-    accepted: 0,
-    rejected: 0
+    total: 0
   })
 
   const fetchCandidateStats = useCallback(async () => {
@@ -34,11 +30,7 @@ export function JobDetailClient({ job }: JobDetailClientProps) {
         const data = await response.json()
         if (data.success) {
           setCandidateStats({
-            total: data.data.pagination.total,
-            pending: 0, // We'll get this from the full data
-            interviewing: 0,
-            accepted: 0,
-            rejected: 0
+            total: data.data.pagination.total
           })
         }
       }
@@ -48,7 +40,6 @@ export function JobDetailClient({ job }: JobDetailClientProps) {
   }, [job.id])
 
   useEffect(() => {
-    // Fetch candidate statistics
     fetchCandidateStats()
   }, [fetchCandidateStats])
 
@@ -77,166 +68,203 @@ export function JobDetailClient({ job }: JobDetailClientProps) {
     }
   }
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    })
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'active': return 'bg-green-100 text-green-800'
+      case 'closed': return 'bg-red-100 text-red-800'
+      case 'draft': return 'bg-gray-100 text-gray-800'
+      default: return 'bg-gray-100 text-gray-800'
+    }
   }
 
+  const getExperienceLevelColor = (level: string) => {
+    switch (level) {
+      case 'junior': return 'bg-green-100 text-green-800'
+      case 'mid': return 'bg-blue-100 text-blue-800'
+      case 'senior': return 'bg-purple-100 text-purple-800'
+      case 'lead': return 'bg-orange-100 text-orange-800'
+      default: return 'bg-gray-100 text-gray-800'
+    }
+  }
 
   return (
     <LayoutWrapper>
-      
-    <div className="container mx-auto px-4 py-8 max-w-6xl ">
-      <div className="flex items-center justify-between mb-4">
-      <div className="space-y-6 flex-1">
-      {/* Header with actions */}
-      <Button
-            variant="outline"
-            onClick={() => router.back()}
-            className="flex items-center space-x-2"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            <span>Back</span>
+      <div className="max-w-4xl mx-auto space-y-6">
+        {/* Clean Header with Essential Actions */}
+        <div className="flex items-center justify-between">
+          <Button size="sm" variant="ghost" onClick={() => router.back()}>
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back
           </Button>
-     
-       
-      </div>
 
-    </div>
-    
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Main job details */}
-        <div className="lg:col-span-2 space-y-6">
-          {/* Job Details Component */}
-          <JobDetail job={job} />
-
-          {/* Candidates Section */}
-          <Card id="candidates-section">
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-2">
-                  <Users className="h-5 w-5" />
-                  <CardTitle>Candidates</CardTitle>
-                </div>
-                <Badge variant="secondary">
-                  {candidateStats.total} candidates
-                </Badge>
-              </div>
-              <CardDescription>
-                People who have applied for this position
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <CandidateListForJob jobId={job.id} />
-            </CardContent>
-          </Card>
+          <div className="flex items-center gap-2">
+            <Button size="sm" variant="outline" onClick={() => router.push(`/jobs/${job.id}/edit`)}>
+              <Edit className="w-4 h-4 mr-2" />
+              Edit
+            </Button>
+            {candidateStats.total > 0 && (
+              <Button size="sm" asChild>
+                <a href="#candidates-section">
+                  <Users className="w-4 h-4 mr-2" />
+                  {candidateStats.total} Applications
+                </a>
+              </Button>
+            )}
+          </div>
         </div>
 
-        {/* Sidebar */}
-        <div className="space-y-6">
-          {/* Quick Actions */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Quick Actions</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <Button
-                className="w-full"
-                onClick={() => router.push(`/jobs/${job.id}/edit`)}
-              >
-                <Edit className="h-4 w-4 mr-2" />
-                Edit Job
-              </Button>
-              <Button
-                variant="outline"
-                className="w-full"
-                onClick={() => router.push('/candidates/add')}
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                Add Candidate
-              </Button>
-              <Button
-                variant="outline"
-                className="w-full text-red-600 hover:text-red-700 hover:bg-red-50"
-                onClick={handleDelete}
-                disabled={isDeleting}
-              >
-                <Trash2 className="h-4 w-4 mr-2" />
-                {isDeleting ? 'Deleting...' : 'Delete Job'}
-              </Button>
-            </CardContent>
-          </Card>
+        {/* Single-Source Job Summary */}
+        <Card className="border-0 shadow-sm">
+          <CardContent className="pt-6">
+            <div className="flex items-start justify-between mb-4">
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-3 mb-2">
+                  <h1 className="text-2xl font-bold text-foreground truncate">{job.title}</h1>
+                  <Badge className={`${getStatusColor(job.status)} text-xs`}>
+                    {job.status}
+                  </Badge>
+                </div>
 
-          {/* Application Statistics */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Applications</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="p-4 bg-blue-50 rounded-lg border border-blue-100">
-                <div className="text-center">
-                  <p className="text-2xl font-bold text-blue-800">{candidateStats.total}</p>
-                  <p className="text-sm text-blue-600">Total Applicants</p>
+                <div className="flex items-center gap-4 text-sm text-muted-foreground mb-3">
+                  <div className="flex items-center gap-1">
+                    <Building className="w-4 h-4" />
+                    <span>{job.company?.name}</span>
+                  </div>
+                  {job.location && (
+                    <>
+                      <span>•</span>
+                      <div className="flex items-center gap-1">
+                        <MapPin className="w-4 h-4" />
+                        <span>{job.location}</span>
+                      </div>
+                    </>
+                  )}
+                  {job.department && (
+                    <>
+                      <span>•</span>
+                      <div className="flex items-center gap-1">
+                        <Briefcase className="w-4 h-4" />
+                        <span>{job.department}</span>
+                      </div>
+                    </>
+                  )}
+                </div>
+
+                <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                  <Badge className={`${getExperienceLevelColor(job.experience_level)} text-xs`}>
+                    {job.experience_level}
+                  </Badge>
+                  <Badge variant="outline" className="text-xs">
+                    {job.job_type.replace('-', ' ')}
+                  </Badge>
+                  <span>•</span>
+                  <span>Posted {formatDistanceToNow(new Date(job.created_at), { addSuffix: true })}</span>
+                  <span>•</span>
+                  <span>{job.required_skills.length} skills required</span>
                 </div>
               </div>
-              {candidateStats.total > 0 && (
-                <Button
-                  variant="outline"
-                  className="w-full"
-                  onClick={() => document.getElementById('candidates-section')?.scrollIntoView({ behavior: 'smooth' })}
-                >
-                  <Users className="h-4 w-4 mr-2" />
-                  View All Candidates
-                </Button>
-              )}
-            </CardContent>
-          </Card>
+            </div>
+          </CardContent>
+        </Card>
 
-          {/* Job Summary */}
+        {/* Single Column Layout - Better Focus */}
+        <div className="space-y-6">
+          {/* Job Description - Priority Content */}
           <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Job Summary</CardTitle>
+            <CardHeader className="pb-3">
+              <CardTitle>Job Description</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">Status</span>
-                <Badge
-                  variant={job.status === 'active' ? 'default' : 'secondary'}
-                  className={job.status === 'active' ? 'bg-green-100 text-green-800' : ''}
-                >
-                  {job.status}
-                </Badge>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">Experience Level</span>
-                <Badge className="bg-blue-100 text-blue-800">
-                  {job.experience_level}
-                </Badge>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">Job Type</span>
-                <Badge className="bg-indigo-100 text-indigo-800">
-                  {job.job_type.replace('-', ' ')}
-                </Badge>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">Skills Required</span>
-                <span className="font-semibold">{job.required_skills.length}</span>
-              </div>
-              <div className="pt-3 border-t">
-                <p className="text-xs text-gray-500">
-                  Posted {formatDate(job.created_at)}
+            <CardContent>
+              <div className="prose max-w-none">
+                <p className="text-sm text-foreground leading-relaxed whitespace-pre-wrap">
+                  {job.description}
                 </p>
               </div>
             </CardContent>
           </Card>
+
+          {/* Required Skills */}
+          {job.required_skills.length > 0 && (
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle>Required Skills</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex flex-wrap gap-2">
+                  {job.required_skills.map((skill, index) => (
+                    <Badge key={index} variant="outline" className="text-xs">
+                      {skill}
+                    </Badge>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Applications Section */}
+          <Card id="candidates-section">
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="flex items-center gap-2">
+                    <Users className="w-5 h-5 text-primary" />
+                    Applications
+                  </CardTitle>
+                  <CardDescription className="mt-1">
+                    Candidates who have applied for this position
+                  </CardDescription>
+                </div>
+                {candidateStats.total === 0 && (
+                  <Button size="sm" onClick={() => router.push('/candidates/add')}>
+                    <Plus className="w-4 h-4 mr-2" />
+                    Add Candidate
+                  </Button>
+                )}
+              </div>
+            </CardHeader>
+            <CardContent>
+              {candidateStats.total > 0 ? (
+                <CandidateListForJob jobId={job.id} />
+              ) : (
+                <div className="text-center py-8">
+                  <Users className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
+                  <p className="text-muted-foreground mb-4">No applications yet</p>
+                  <div className="flex justify-center gap-3">
+                    <Button onClick={() => router.push('/candidates/add')}>
+                      <Plus className="w-4 h-4 mr-2" />
+                      Add Candidate
+                    </Button>
+                    <Button variant="outline" onClick={() => router.push('/candidates')}>
+                      Browse Candidates
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Danger Zone - Minimal */}
+          <Card className="border-red-100 bg-red-50/30">
+            <CardContent className="pt-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="font-medium text-foreground">Danger Zone</h3>
+                  <p className="text-sm text-muted-foreground">Delete this job permanently</p>
+                </div>
+                <Button
+                  size="sm"
+                  variant="destructive"
+                  onClick={handleDelete}
+                  disabled={isDeleting}
+                >
+                  <Trash2 className="w-4 h-4 mr-2" />
+                  {isDeleting ? 'Deleting...' : 'Delete Job'}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
-    </div>
     </LayoutWrapper>
   )
 }

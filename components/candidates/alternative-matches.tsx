@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { ExternalLink, TrendingUp } from 'lucide-react'
@@ -43,86 +43,82 @@ export function AlternativeMatches({ matches, candidateName }: AlternativeMatche
   }
 
   return (
-    <Card className="border">
-      <CardHeader className="bg-gradient-to-r from-green-50 to-emerald-50 border-b border-green-100">
-        <CardTitle className="flex items-center space-x-3">
-          <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-            <TrendingUp className="w-5 h-5 text-green-600" />
+    <Card className="border-0 shadow-sm">
+      <CardHeader className="pb-3">
+        <div className="flex items-center space-x-3">
+          <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+            <TrendingUp className="w-4 h-4 text-blue-600" />
           </div>
           <div>
-            <span className="text-xl font-semibold text-green-800">Better Job Matches</span>
-            <p className="text-sm text-green-600 font-normal">For {candidateName}</p>
+            <CardTitle className="text-lg">Alternative Job Matches</CardTitle>
+            <CardDescription className="text-sm">For {candidateName}</CardDescription>
           </div>
-        </CardTitle>
+        </div>
       </CardHeader>
-      <CardContent className="pt-6">
-        <div className="space-y-6">
-          {matches.map((job, index) => (
+      <CardContent className="pt-0">
+        <div className="space-y-4">
+          {matches.slice(0, 3).map((job, index) => (
             <div
               key={job.id}
-              className={`p-6 rounded-xl border-2 ${index === 0 ? 'border-green-200 bg-gradient-to-r from-green-50/30 to-emerald-50/30' : 'border-border bg-gradient-to-r from-background to-muted/10'}`}
+              className={`p-4 rounded-lg border transition-all hover:shadow-md ${
+                index === 0
+                  ? 'border-blue-200 bg-blue-50/30'
+                  : 'border-border bg-background'
+              }`}
             >
-              <div className="flex items-start justify-between mb-4">
-                <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-2">
-                    <h4 className="font-bold text-lg text-foreground">{job.title}</h4>
+              <div className="flex items-start justify-between mb-3">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-1">
+                    <h4 className="font-semibold text-foreground truncate">{job.title}</h4>
                     {index === 0 && (
-                      <Badge variant="default" className="text-xs font-medium bg-green-100 text-green-800">
+                      <Badge variant="default" className="text-xs bg-blue-100 text-blue-800">
                         Best Match
                       </Badge>
                     )}
                   </div>
-                  {job.department && (
-                    <p className="text-sm text-muted-foreground flex items-center gap-1">
-                      <span>{job.department}</span>
-                    </p>
-                  )}
-                  {job.location && (
-                    <p className="text-sm text-muted-foreground">{job.location}</p>
-                  )}
+
+                  <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                    {job.department && <span>{job.department}</span>}
+                    {job.location && job.department && <span>•</span>}
+                    {job.location && <span>{job.location}</span>}
+                  </div>
                 </div>
-                <div className="flex items-center space-x-3">
-                  <Badge className={`${getScoreColor(job.composite_score)} font-bold text-sm px-3 py-1`}>
-                    {formatScore(job.composite_score)}% Match
+
+                <div className="flex items-center space-x-2 ml-4">
+                  <Badge variant={getScoreVariant(job.composite_score)} className="text-xs font-medium">
+                    {formatScore(job.composite_score)}% match
                   </Badge>
-                  <Button size="sm" variant="outline" asChild>
+                  <Button size="sm" variant="ghost" asChild>
                     <Link href={`/jobs/${job.id}`}>
-                      <ExternalLink className="w-4 h-4 mr-2" />
-                      View Job
+                      <ExternalLink className="w-4 h-4" />
+                      <span className="sr-only">View Job</span>
                     </Link>
                   </Button>
                 </div>
               </div>
 
-              {/* Score breakdown */}
-              <div className="grid grid-cols-3 gap-4 mb-4">
-                <div className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
-                  <span className="text-sm font-medium text-muted-foreground">Skills</span>
-                  <span className="font-bold text-sm text-foreground">
-                    {job.skills_score ? formatScore(job.skills_score) : 'N/A'}%
-                  </span>
-                </div>
-                <div className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
-                  <span className="text-sm font-medium text-muted-foreground">Experience</span>
-                  <span className="font-bold text-sm text-foreground">
-                    {job.experience_score ? formatScore(job.experience_score) : 'N/A'}%
-                  </span>
-                </div>
-                <div className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
-                  <span className="text-sm font-medium text-muted-foreground">Profile</span>
-                  <span className="font-bold text-sm text-foreground">
-                    {job.profile_score ? formatScore(job.profile_score) : 'N/A'}%
-                  </span>
-                </div>
+              {/* Simplified Score Breakdown */}
+              <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                <span>Skills: {job.skills_score ? formatScore(job.skills_score) : 'N/A'}%</span>
+                <span>Experience: {job.experience_score ? formatScore(job.experience_score) : 'N/A'}%</span>
+                <span>Profile: {job.profile_score ? formatScore(job.profile_score) : 'N/A'}%</span>
               </div>
 
               {job.description && (
-                <p className="text-sm text-muted-foreground line-clamp-3 leading-relaxed">
+                <p className="mt-2 text-sm text-muted-foreground line-clamp-2 leading-relaxed">
                   {job.description}
                 </p>
               )}
             </div>
           ))}
+
+          {matches.length > 3 && (
+            <div className="text-center pt-2">
+              <Button variant="outline" size="sm" className="text-xs">
+                View {matches.length - 3} more matches
+              </Button>
+            </div>
+          )}
         </div>
       </CardContent>
     </Card>
