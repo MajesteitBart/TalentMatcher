@@ -1,9 +1,43 @@
-# Job Creation Validation Error - FIXED ✅
+# Recent Error Fixes - November 2025
+
+This document tracks recently resolved errors and their solutions. For comprehensive error handling guidance, see the [Error Handling Guide](./ERROR_HANDLING.md).
+
+---
+
+## Job Creation Validation Error - FIXED ✅
 
 **Issue**: POST /api/jobs returned validation error for experience level and company ID format
 **Fix Applied**: Updated Zod schema in `/app/api/jobs/route.ts` to accept proper enum values and UUID regex
 **Status**: RESOLVED - Job creation now works correctly
 **Fixed**: 2025-11-20T21:03:00Z
+
+### Root Cause Analysis
+
+The validation schema was too restrictive:
+- Company ID required exact UUID format but validation regex was incorrect
+- Experience level enum didn't match the allowed values in the database
+- Job description character limit was too low (5,000) for detailed job postings
+
+### Changes Made
+
+```typescript
+// Before
+company_id: z.string().uuid() // Too strict
+experience_level: z.enum(['entry', 'mid', 'senior']) // Missing 'lead', 'executive'
+description: z.string().max(5000) // Too short
+
+// After
+company_id: z.string().regex(/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/, 'Invalid company ID format')
+experience_level: z.enum(['entry', 'mid', 'senior', 'lead', 'executive'])
+description: z.string().max(20000) // Increased limit
+```
+
+### Test Cases Added
+
+- Valid UUID formats accepted
+- All experience levels work correctly
+- Long job descriptions (up to 20,000 chars) accepted
+- Proper error messages for invalid formats
 
 ---
 
