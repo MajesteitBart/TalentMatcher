@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button'
 import { getCandidate } from '@/lib/data/candidates'
 import { formatDistanceToNow } from 'date-fns'
 import Link from 'next/link'
-import { ArrowLeft, Mail, Phone, Briefcase, Plus } from 'lucide-react'
+import { ArrowLeft, Mail, Phone, Briefcase, Plus, UserPlus } from 'lucide-react'
 import { notFound } from 'next/navigation'
 import { CandidateApplications } from '@/components/candidates/candidate-applications'
 import { AlternativeMatches } from '@/components/candidates/alternative-matches'
@@ -104,6 +104,12 @@ export default async function CandidateDetailPage({
                   </Link>
                 </Button>
                 <Button className="w-full" asChild>
+                  <Link href={`/jobs?candidate=${id}`}>
+                    <UserPlus className="w-4 h-4 mr-2" />
+                    Add Application
+                  </Link>
+                </Button>
+                <Button variant="outline" className="w-full" asChild>
                   <Link href="/jobs/new">
                     <Plus className="w-4 h-4 mr-2" />
                     Create Job for Candidate
@@ -123,9 +129,17 @@ export default async function CandidateDetailPage({
                     <Briefcase className="w-5 h-5 text-primary" />
                     <CardTitle>Applications</CardTitle>
                   </div>
-                  <Badge variant="secondary">
-                    {candidate.applications?.length || 0} application{(candidate.applications?.length || 0) !== 1 ? 's' : ''}
-                  </Badge>
+                  <div className="flex items-center gap-2">
+                    <Button size="sm" asChild>
+                      <Link href={`/jobs?candidate=${id}`}>
+                        <UserPlus className="w-4 h-4 mr-2" />
+                        Add Application
+                      </Link>
+                    </Button>
+                    <Badge variant="secondary">
+                      {candidate.applications?.length || 0} application{(candidate.applications?.length || 0) !== 1 ? 's' : ''}
+                    </Badge>
+                  </div>
                 </div>
                 <CardDescription>
                   Job applications and interview history
@@ -139,10 +153,19 @@ export default async function CandidateDetailPage({
                   />
                 ) : (
                   <div className="text-center py-8">
-                    <p className="text-muted-foreground">No applications yet</p>
-                    <Button variant="outline" className="mt-4" asChild>
-                      <Link href="/jobs">Browse Available Jobs</Link>
-                    </Button>
+                    <UserPlus className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                    <p className="text-muted-foreground mb-4">No applications yet</p>
+                    <div className="flex justify-center gap-3">
+                      <Button className="mt-4" asChild>
+                        <Link href={`/jobs?candidate=${id}`}>
+                          <UserPlus className="w-4 h-4 mr-2" />
+                          Add Application
+                        </Link>
+                      </Button>
+                      <Button variant="outline" className="mt-4" asChild>
+                        <Link href="/jobs">Browse Jobs</Link>
+                      </Button>
+                    </div>
                   </div>
                 )}
               </CardContent>

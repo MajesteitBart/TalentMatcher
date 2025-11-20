@@ -7,7 +7,7 @@ import type { APIResponse } from '@/lib/types'
 const CreateApplicationSchema = z.object({
   candidate_id: z.string().uuid(),
   job_id: z.string().uuid(),
-  status: z.enum(['pending', 'reviewing', 'interviewing', 'rejected', 'accepted']).default('pending')
+  status: z.enum(['rejected', 'applied']).default('applied')
 })
 
 export async function POST(request: NextRequest): Promise<NextResponse<APIResponse>> {
@@ -92,12 +92,14 @@ export async function POST(request: NextRequest): Promise<NextResponse<APIRespon
       .single()
 
     if (error) {
+      console.error('Database error creating application:', JSON.stringify(error, null, 2))
       logger.error('Error creating application', { error: error.message, data: validatedData })
       return NextResponse.json({
         success: false,
         error: {
           message: 'Failed to create application',
-          code: 'DATABASE_ERROR'
+          code: 'DATABASE_ERROR',
+          details: error.message
         }
       }, { status: 500 })
     }

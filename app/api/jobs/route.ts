@@ -5,11 +5,11 @@ import { logger } from '@/lib/utils/logger'
 import type { APIResponse } from '@/lib/types'
 
 const CreateJobSchema = z.object({
-  company_id: z.string().uuid(),
+  company_id: z.string().regex(/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/, 'Invalid company ID format'),
   title: z.string().min(1, 'Title is required').max(200),
-  description: z.string().min(1, 'Description is required').max(5000),
+  description: z.string().min(1, 'Description is required').max(20000),
   required_skills: z.array(z.string().min(1)).max(20).default([]),
-  experience_level: z.string().min(1, 'Experience level is required'),
+  experience_level: z.enum(['entry', 'mid', 'senior', 'lead', 'executive']),
   department: z.string().max(100).optional(),
   location: z.string().max(200).optional(),
   job_type: z.enum(['full-time', 'part-time', 'contract', 'internship']),

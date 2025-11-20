@@ -5,13 +5,13 @@ import { logger } from '@/lib/utils/logger'
 import type { APIResponse } from '@/lib/types'
 
 const CreateCandidateSchema = z.object({
-  company_id: z.string().uuid(),
+  company_id: z.string().regex(/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/, 'Invalid company ID format'),
   name: z.string().min(1, 'Name is required').max(200),
   email: z.string().email('Valid email is required'),
   cv_text: z.string().min(1, 'CV text is required').max(10000),
-  cv_file_url: z.string().url().optional(),
+  cv_file_url: z.string().url().optional().or(z.literal('')),
   phone: z.string().max(50).optional(),
-  linkedin_url: z.string().url().optional()
+  linkedin_url: z.string().url().optional().or(z.literal(''))
 })
 
 export async function POST(request: NextRequest): Promise<NextResponse<APIResponse>> {
@@ -55,6 +55,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<APIRespon
     logger.error('Candidate creation API error', { error })
 
     if (error instanceof z.ZodError) {
+      console.error('Validation errors:', (error as any).errors)
       return NextResponse.json({
         success: false,
         error: {

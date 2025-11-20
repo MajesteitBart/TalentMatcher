@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
-import { createClient } from '@/lib/supabase/client'
 import { z } from 'zod'
 import type { APIResponse } from '@/lib/types'
 import type { Database } from '@/lib/types/database'
@@ -18,20 +17,6 @@ export async function PATCH(
     const { id: applicationId } = await params
     const body = await request.json()
     const { status, rejection_reason } = UpdateApplicationStatusSchema.parse(body)
-
-    // Get authenticated user
-    const supabase = createClient()
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
-
-    if (authError || !user) {
-      return NextResponse.json({
-        success: false,
-        error: {
-          message: 'Unauthorized',
-          code: 'UNAUTHORIZED'
-        }
-      }, { status: 401 })
-    }
 
     const adminClient = createAdminClient()
 
@@ -96,7 +81,6 @@ export async function PATCH(
         application_id: applicationId,
         old_status: (currentApplication as any).status,
         new_status: status,
-        changed_by: user.id,
         rejection_reason: status === 'rejected' ? rejection_reason : null,
         changed_at: new Date().toISOString()
       })

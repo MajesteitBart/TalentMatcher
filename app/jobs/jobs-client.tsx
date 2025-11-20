@@ -10,7 +10,7 @@ import { Select } from '@/components/ui/select'
 import type { JobWithCompany } from '@/lib/types/database'
 import { formatDistanceToNow } from 'date-fns'
 import Link from 'next/link'
-import { Plus, Edit, Trash2, Eye, Briefcase, MapPin, Clock, Users, Search } from 'lucide-react'
+import { Plus, Edit, Trash2, Eye, Briefcase, MapPin, Clock, Users, Search, UserCheck } from 'lucide-react'
 
 interface Company {
   id: string
@@ -21,9 +21,10 @@ interface Company {
 interface JobsClientProps {
   initialJobs: JobWithCompany[]
   initialCompanies: Company[]
+  candidateId?: string
 }
 
-export function JobsClient({ initialJobs, initialCompanies }: JobsClientProps) {
+export function JobsClient({ initialJobs, initialCompanies, candidateId }: JobsClientProps) {
   const [jobs, setJobs] = useState<JobWithCompany[]>(initialJobs)
   const [companies] = useState<Company[]>(initialCompanies)
   const [actionLoading, setActionLoading] = useState<string | null>(null)
@@ -144,21 +145,85 @@ export function JobsClient({ initialJobs, initialCompanies }: JobsClientProps) {
     }
   }
 
+  const handleCreateApplication = async (jobId: string, jobTitle: string) => {
+    if (!candidateId) {
+      alert('Candidate ID is required')
+      return
+    }
+
+    setActionLoading(jobId)
+
+    try {
+      const response = await fetch('/api/applications', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          candidate_id: candidateId,
+          job_id: jobId,
+          status: 'applied'
+        }),
+      })
+
+      const result = await response.json()
+
+      if (!response.ok) {
+        if (result.error?.code === 'APPLICATION_EXISTS') {
+          alert('This candidate has already applied for this job.')
+        } else {
+          throw new Error(result.error?.message || 'Failed to create application')
+        }
+        return
+      }
+
+      alert(`Application created successfully for "${jobTitle}"!`)
+
+      // Redirect to candidate detail page to see the new application
+      window.location.href = `/candidates/${candidateId}`
+
+    } catch (error) {
+      alert(error instanceof Error ? error.message : 'An error occurred while creating the application')
+    } finally {
+      setActionLoading(null)
+    }
+  }
+
   return (
     <LayoutWrapper>
       <div className="space-y-6">
         <div className="flex justify-between items-center">
-          <h1 className="text-3xl font-bold text-gray-900">Jobs</h1>
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">
+              {candidateId ? 'Select a Job to Apply To' : 'Jobs'}
+            </h1>
+            {candidateId && (
+              <p className="text-gray-600 mt-1">
+                Choose a job below to create an application for this candidate
+              </p>
+            )}
+          </div>
           <div className="flex space-x-4">
-            <Button onClick={() => setShowIndexModal(true)}>
-              Index All Jobs
-            </Button>
-            <Button className="flex items-center space-x-2" asChild>
-              <Link href="/jobs/new">
-                <Plus className="w-4 h-4" />
-                <span>Add New Job</span>
-              </Link>
-            </Button>
+            {candidateId ? (
+              <Button variant="outline" asChild>
+                <Link href="/candidates">
+                  <Eye className="w-4 h-4 mr-2" />
+                  Back to Candidates
+                </Link>
+              </Button>
+            ) : (
+              <>
+                <Button onClick={() => setShowIndexModal(true)}>
+                  Index All Jobs
+                </Button>
+                <Button className="flex items-center space-x-2" asChild>
+                  <Link href="/jobs/new">
+                    <Plus className="w-4 h-4" />
+                    <span>Add New Job</span>
+                  </Link>
+                </Button>
+              </>
+            )}
           </div>
         </div>
 
@@ -221,15 +286,21 @@ export function JobsClient({ initialJobs, initialCompanies }: JobsClientProps) {
             <CardContent className="py-12 text-center">
               <Briefcase className="w-12 h-12 text-gray-400 mx-auto mb-4" />
               <h3 className="text-lg font-medium text-gray-900 mb-2">
-                {jobs.length === 0 ? 'No jobs yet' : 'No jobs match your filters'}
+                {jobs.length === 0
+                  ? (candidateId ? 'No available jobs to apply to' : 'No jobs yet')
+                  : 'No jobs match your filters'
+                }
               </h3>
               <p className="text-gray-600 mb-6">
                 {jobs.length === 0
-                  ? 'Get started by adding your first job posting to system.'
+                  ? (candidateId
+                      ? 'There are currently no active jobs available for this candidate to apply to.'
+                      : 'Get started by adding your first job posting to the system.'
+                    )
                   : 'Try adjusting your search or filters.'
                 }
               </p>
-              {jobs.length === 0 && (
+              {jobs.length === 0 && !candidateId && (
                 <Button className="flex items-center space-x-2" asChild>
                   <Link href="/jobs/new">
                     <Plus className="w-4 h-4" />
@@ -261,27 +332,41 @@ export function JobsClient({ initialJobs, initialCompanies }: JobsClientProps) {
                       >
                         {job.status}
                       </span>
-                      <Button variant="outline" size="sm" asChild>
-                        <Link href={`/jobs/${job.id}`}>
-                          <Eye className="w-4 h-4 mr-2" />
-                          View
-                        </Link>
-                      </Button>
-                      <Button size="sm" asChild>
-                        <Link href={`/jobs/${job.id}/edit`}>
-                          <Edit className="w-4 h-4 mr-2" />
-                          Edit
-                        </Link>
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleDeleteJob(job.id, job.title)}
-                        disabled={actionLoading === job.id}
-                      >
-                        <Trash2 className="w-4 h-4 mr-2" />
-                        {actionLoading === job.id ? 'Deleting...' : 'Delete'}
-                      </Button>
+                      {candidateId ? (
+                        <Button
+                          size="sm"
+                          onClick={() => handleCreateApplication(job.id, job.title)}
+                          disabled={actionLoading === job.id || job.status !== 'active'}
+                          className="bg-blue-600 hover:bg-blue-700"
+                        >
+                          <UserCheck className="w-4 h-4 mr-2" />
+                          {actionLoading === job.id ? 'Creating...' : 'Apply'}
+                        </Button>
+                      ) : (
+                        <>
+                          <Button variant="outline" size="sm" asChild>
+                            <Link href={`/jobs/${job.id}`}>
+                              <Eye className="w-4 h-4 mr-2" />
+                              View
+                            </Link>
+                          </Button>
+                          <Button size="sm" asChild>
+                            <Link href={`/jobs/${job.id}/edit`}>
+                              <Edit className="w-4 h-4 mr-2" />
+                              Edit
+                            </Link>
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleDeleteJob(job.id, job.title)}
+                            disabled={actionLoading === job.id}
+                          >
+                            <Trash2 className="w-4 h-4 mr-2" />
+                            {actionLoading === job.id ? 'Deleting...' : 'Delete'}
+                          </Button>
+                        </>
+                      )}
                     </div>
                   </div>
                 </CardHeader>
