@@ -37,8 +37,8 @@ export function AlternativeMatches({ matches, candidateName }: AlternativeMatche
   }
 
   const getScoreVariant = (score: number) => {
-    if (score >= 0.8) return 'success'
-    if (score >= 0.6) return 'warning'
+    if (score >= 0.8) return 'default'
+    if (score >= 0.6) return 'secondary'
     return 'destructive'
   }
 

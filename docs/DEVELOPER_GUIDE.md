@@ -313,6 +313,191 @@ NODE_ENV=development
 }
 ```
 
+## UI Design System v4
+
+### Design Philosophy
+
+The v4 redesign follows these core principles:
+- **Single-Column Layout**: Focused, linear information flow
+- **Semantic Color Coding**: Consistent meaning through colors
+- **Progressive Disclosure**: Essential information first
+- **Mobile-First**: Responsive design from small screens up
+
+### Layout Patterns
+
+#### Page Structure
+```typescript
+// Standard page layout (v4)
+<div className="max-w-4xl mx-auto space-y-6">
+  {/* Clean header with actions */}
+  <div className="flex items-center justify-between">
+    <Button size="sm" variant="ghost" asChild>
+      <Link href="/back">
+        <ArrowLeft className="w-4 h-4 mr-2" />
+        Back
+      </Link>
+    </Button>
+    <Button size="sm" asChild>
+      <Link href="/action">
+        <ActionIcon className="w-4 h-4 mr-2" />
+        Primary Action
+      </Link>
+    </Button>
+  </div>
+
+  {/* Single-source information */}
+  <Card className="border-0 shadow-sm">
+    <CardContent className="pt-6">
+      {/* Essential content */}
+    </CardContent>
+  </Card>
+
+  {/* Priority-based sections */}
+  <div className="space-y-6">
+    <Card> {/* Highest priority content */} </Card>
+    {conditionalContent && <Card> {/* Conditional content */} </Card>}
+    <Card> {/* Secondary content */} </Card>
+  </div>
+</div>
+```
+
+#### Card Patterns
+```typescript
+// Primary card - main content
+<Card className="border-0 shadow-sm">
+  <CardContent className="pt-6">
+    {/* Content */}
+  </CardContent>
+</Card>
+
+// Section card - grouped content
+<Card>
+  <CardHeader className="pb-3">
+    <CardTitle className="flex items-center gap-2">
+      <Icon className="w-5 h-5 text-primary" />
+      Section Title
+    </CardTitle>
+    <CardDescription>Section description</CardDescription>
+  </CardHeader>
+  <CardContent>
+    {/* Content */}
+  </CardContent>
+</Card>
+
+// Alert card - warnings/danger
+<Card className="border-red-100 bg-red-50/30">
+  <CardContent className="pt-6">
+    {/* Warning content */}
+  </CardContent>
+</Card>
+```
+
+### Color System
+
+#### Semantic Colors
+```typescript
+const statusColors = {
+  // Success states
+  active: 'bg-green-100 text-green-800',
+  hired: 'bg-emerald-100 text-emerald-800',
+  valid: 'bg-green-100 text-green-800',
+
+  // Warning states
+  underReview: 'bg-yellow-100 text-yellow-800',
+  mid: 'bg-blue-100 text-blue-800',
+  needsReview: 'bg-yellow-100 text-yellow-800',
+
+  // Information states
+  applied: 'bg-blue-100 text-blue-800',
+  interview: 'bg-purple-100 text-purple-800',
+  junior: 'bg-green-100 text-green-800',
+  senior: 'bg-purple-100 text-purple-800',
+
+  // Error states
+  rejected: 'bg-red-100 text-red-800',
+  closed: 'bg-red-100 text-red-800',
+  invalid: 'bg-red-100 text-red-800',
+
+  // Neutral states
+  draft: 'bg-gray-100 text-gray-800',
+  unknown: 'bg-gray-100 text-gray-800'
+}
+```
+
+#### Badge Variants
+```typescript
+const getBadgeVariant = (score: number) => {
+  if (score >= 0.8) return 'default'      // Green - Excellent
+  if (score >= 0.6) return 'secondary'    // Yellow - Good
+  return 'destructive'                     // Red - Poor
+}
+```
+
+### Component Patterns
+
+#### Empty States
+```typescript
+if (items.length === 0) {
+  return (
+    <div className="text-center py-8">
+      <ItemIcon className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
+      <p className="text-muted-foreground mb-4">No items yet</p>
+      <div className="flex justify-center space-x-3">
+        <Button asChild>
+          <Link href="/add">
+            <Plus className="w-4 h-4 mr-2" />
+            Add Item
+          </Link>
+        </Button>
+        <Button variant="outline" asChild>
+          <Link href="/browse">Browse Items</Link>
+        </Button>
+      </div>
+    </div>
+  )
+}
+```
+
+#### Loading States
+```typescript
+if (loading) {
+  return (
+    <div className="flex items-center justify-center py-8">
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      <span className="ml-2 text-gray-600">Loading...</span>
+    </div>
+  )
+}
+```
+
+#### Status Indicators
+```typescript
+<div className="flex items-center gap-3 text-sm text-muted-foreground">
+  <Icon className="w-4 h-4" />
+  <span>Label</span>
+  <span>•</span>
+  <span>Additional info</span>
+</div>
+```
+
+### Typography Hierarchy
+```typescript
+// Page titles
+<h1 className="text-2xl font-bold text-foreground">Page Title</h1>
+
+// Card titles
+<CardTitle className="text-lg">Card Title</CardTitle>
+
+// Section headers
+<h3 className="font-medium text-foreground">Section Header</h3>
+
+// Body text
+<p className="text-sm text-muted-foreground">Body content</p>
+
+// Metadata
+<span className="text-xs text-muted-foreground">Metadata</span>
+```
+
 ## Common Development Tasks
 
 ### Adding New API Endpoints
@@ -336,6 +521,48 @@ const UserProfileSchema = z.object({
 ```bash
 # Documentation will be auto-updated
 Task agent_type="documentation-writer" description="Update API docs for user profile endpoint"
+```
+
+### Creating New UI Components (v4)
+
+1. **Follow v4 design patterns**
+```typescript
+// Use single-column layout
+<div className="max-w-4xl mx-auto space-y-6">
+  {/* Content */}
+</div>
+
+// Apply semantic colors
+<Badge className="bg-green-100 text-green-800">Status</Badge>
+
+// Use consistent spacing
+<div className="space-y-6">
+  <div className="p-4 rounded-lg border">...</div>
+  <div className="p-4 rounded-lg border">...</div>
+</div>
+```
+
+2. **Add proper empty states**
+```typescript
+{items.length === 0 && (
+  <div className="text-center py-8">
+    <EmptyIcon className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
+    <p className="text-muted-foreground mb-4">No items yet</p>
+    <Button>Add First Item</Button>
+  </div>
+)}
+```
+
+3. **Implement responsive design**
+```typescript
+<div className="flex flex-col sm:flex-row gap-4">
+  <div className="flex-1"> {/* Content */} </div>
+</div>
+```
+
+4. **Test with design-review agent**
+```bash
+Task agent_type="design-review" description="Review new component for UI consistency"
 ```
 
 ### Database Schema Changes
